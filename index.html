@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+    <h1>Hello, world!</h1>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var journeys = {};
+        $.getJSON("data/oyster-data.json", function(data) {
+            var items = [];
+            $.each(data, function(row) {
+                $.each(data[row], function(key, val) {
+                    if (key === 'Journey/Action') {
+                        if (val in journeys) {
+                            journeys[val] += 1;
+                        } else {
+                            journeys[val] = 1;
+                        }
+                    }
+                    items.push('<li>' + key + ': ' + val + '</li>');
+                });
+                items.push('<li></li>');
+            });
+            $('<ul/>', {
+                'class': 'my-new-list',
+                html: items.join('')
+            }).appendTo('body');
+            console.log(journeys);
+        });
+    </script>
+</body>
+</html>
