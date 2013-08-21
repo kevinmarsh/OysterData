@@ -1,38 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap 101 Template</title>
+    <title>Oyster Data</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <h1>Hello, world!</h1>
+    <h1>Osyter Data</h1>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
-        var journeys = {};
+        var journeys = {};  // Station name, number of journeys, average cost, average time
         $.getJSON("data/oyster-data.json", function(data) {
-            var items = [];
-            $.each(data, function(row) {
-                $.each(data[row], function(key, val) {
-                    if (key === 'Journey/Action') {
-                        if (val in journeys) {
-                            journeys[val] += 1;
-                        } else {
-                            journeys[val] = 1;
-                        }
+            // SAMPLE DATA IN JSON
+            // Balance: "9.95"
+            // Charge: "2.8"
+            // Credit: ""
+            // Date: "13-Aug-2013"
+            // End Time: "17:59"
+            // Journey/Action: "Brixton [London Underground] to Camden Town"
+            // Note: ""
+            // Start Time: "17:36"
+
+            $.each(data, function(i, row) {
+                if (parseFloat(row['Charge'])) {
+                    var stationname = row['Journey/Action'];
+                    if (!(stationname in journeys)) {
+                        // Add the station name to the journeys
+                        journeys[stationname] = {
+                            'count': 0,
+                            'time': 0,
+                            'price': 0
+                        };
                     }
-                    items.push('<li>' + key + ': ' + val + '</li>');
-                });
-                items.push('<li></li>');
+                    var timeDiff = new Date(2013, 01, 01, row['End Time'].split(':')[0], row['End Time'].split(':')[1], 0, 0) - new Date(2013, 01, 01, row['Start Time'].split(':')[0], row['Start Time'].split(':')[1], 0, 0);
+                    journeys[stationname]['count'] += 1;
+                    journeys[stationname]['time'] += timeDiff;
+                    journeys[stationname]['price'] += parseFloat(row['Charge']);
+                }
+
             });
-            $('<ul/>', {
-                'class': 'my-new-list',
-                html: items.join('')
-            }).appendTo('body');
-            console.log(journeys);
+
+            // console.log(journeys);
+            convert_stations_to_table(journeys, 2);
+
         });
+        function strip_station_name(stationname) {
+            return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
+        }
+        function convert_stations_to_table(stationData, minJourneys){
+            var stationList = $('<table/>').appendTo('body');
+            $('<tr/>').html('<th>Staion Name</th><th>Count</th><th>Avg Time</th><th>Avg Price</th>').appendTo(stationList);
+            $.each(stationData, function(station, data) {
+                // console.log(station, data);
+                if (!minJourneys || data['count'] >= minJourneys) {
+                    var stationRow = $('<tr/>').appendTo(stationList);
+                    $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
+                    $('<td/>').text(data['count']).appendTo(stationRow);
+                    $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
+                    $('<td/>').text((data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
+                }
+            });
+        }
     </script>
 </body>
 </html>
