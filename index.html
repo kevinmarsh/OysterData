@@ -7,32 +7,33 @@
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <h1>Hello, world!</h1>
+    <h1>CSV-JSON Test</h1>
+
+    <div id="uploadcsv">
+        <button class="upload">Upload CSV</button>
+        <input type="file" name="imagefile" size="0" style="display:none;" />
+    </div>
+
+    <div id="csvDemo" style="display:none;">
+        <h1>csvjson.js demo page</h1>
+        <p>Inspect the page source to see what's going on ;)</p>
+        <button id="runConvert">Convert CSV-JSON</button>
+
+        <h4>Input CSV data:</h4>
+        <pre id="input">"Name","Address","Age"
+    "Joe Bloggs","15 Example Ave, Sunny hills",25
+    "Sam Smith","2012 Ursula Pde, Groceryville",40</pre><br />
+
+        <h4>Ouput CSV data (should be identical):</h4>
+        <pre id="output"></pre>
+    </div>
+
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        var journeys = {};
-        $.getJSON("data/oyster-data.json", function(data) {
-            var items = [];
-            $.each(data, function(row) {
-                $.each(data[row], function(key, val) {
-                    if (key === 'Journey/Action') {
-                        if (val in journeys) {
-                            journeys[val] += 1;
-                        } else {
-                            journeys[val] = 1;
-                        }
-                    }
-                    items.push('<li>' + key + ': ' + val + '</li>');
-                });
-                items.push('<li></li>');
-            });
-            $('<ul/>', {
-                'class': 'my-new-list',
-                html: items.join('')
-            }).appendTo('body');
-            console.log(journeys);
-        });
-    </script>
+    <script src="js/lib/bootstrap.min.js"></script>
+    <!--
+    <script src="js/lib/csvjson.min.js"></script>
+    -->
+
+    <script src="js/main.js"></script>
 </body>
 </html>
