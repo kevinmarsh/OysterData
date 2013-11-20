@@ -1,3 +1,26 @@
+/*******************************************************************************
+Oyster Data by Kevin Marsh 2013
+
+* Upload the csv file via an upload button
+* Convert the csv file to JSON (in the format of an array of journeys)
+    {
+        "Journey/Action": "Brixton [London Underground] to Camden Town",
+        "Start Time": "17:36",
+        "Charge": "2.8",
+        "Note": "",
+        "Credit": "",
+        "End Time": "17:59",
+        "Date": "13-Aug-2013",
+        "Balance": "9.95"
+    }
+* Save the journeys in session/local storage
+* Process the journeys into routes (Station A to Station B)
+
+
+*******************************************************************************/
+
+"use strict";
+
 function readUpload(reqFile){
     if(reqFile.files && reqFile.files[0]){
         var reader = new FileReader();
@@ -91,14 +114,14 @@ function loadSampleData() {
 
         // == {"Journey/Action": "Brixton [London Underground] to Camden Town", "Start Time": "17:36", "Charge": "2.8", "Note": "", "Credit": "", "End Time": "17:59", "Date": "13-Aug-2013", "Balance": "9.95"},
 
-        routes = convert_journeys_to_routes(jsonData);
+        var routes = convert_journeys_to_routes(jsonData);
         convert_stations_to_table(routes, 2);
     });
 }
 
 function convert_journeys_to_routes (journeys) {
     // Take the array of individual journeys and convert them to routes with aggregated data
-    routes = {};  // Station name, number of journeys, average cost, average time
+    var routes = {};  // Station name, number of journeys, average cost, average time
     $.each(journeys, function(i, row) {
         if (parseFloat(row['Charge'])) {
             // Skip any ones that are bus journeys or top ups
@@ -111,7 +134,9 @@ function convert_journeys_to_routes (journeys) {
                     'price': 0
                 };
             }
-            var timeDiff = new Date(2013, 01, 01, row['End Time'].split(':')[0], row['End Time'].split(':')[1], 0, 0) - new Date(2013, 01, 01, row['Start Time'].split(':')[0], row['Start Time'].split(':')[1], 0, 0);
+            var endTime = new Date(row['Date'] + " " + row['End Time']);
+            var startTime = new Date(row['Date'] + " " + row['Start Time']);
+            var timeDiff = endTime - startTime;
             routes[stationname]['count'] += 1;
             routes[stationname]['time'] += timeDiff;
             routes[stationname]['price'] += parseFloat(row['Charge']);
@@ -140,24 +165,4 @@ function convert_stations_to_table(stationData, minJourneys){
 $('#loadsampledata').on('click', loadSampleData);
 
 /*******************************************************************************
-*******************************************************************************/
-
-/*******************************************************************************
-
-* Upload the csv file via an upload button
-* Convert the csv file to JSON (in the format of an array of journeys)
-    {
-        "Journey/Action": "Brixton [London Underground] to Camden Town",
-        "Start Time": "17:36",
-        "Charge": "2.8",
-        "Note": "",
-        "Credit": "",
-        "End Time": "17:59",
-        "Date": "13-Aug-2013",
-        "Balance": "9.95"
-    }
-* Save the journeys in session/local storage
-* Process the journeys into routes (Station A to Station B)
-
-
 *******************************************************************************/
