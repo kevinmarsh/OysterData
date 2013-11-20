@@ -4,7 +4,7 @@
     <title>Oyster Data</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
 </head>
 <body>
     <h1>CSV-JSON Test</h1>
@@ -14,71 +14,16 @@
         <input type="file" name="imagefile" size="0" style="display:none;" />
     </div>
 
+    <br>
+
+    <button id="loadsampledata">Load sample json data</button>
+
     <hr>
 
     <h1>Osyter Data</h1>
 
-    <!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
     <script src="js/lib/jquery-1.10.2.min.js"></script>
-    <!-- <script src="js/lib/csvjson.min.js"></script> -->
-    <script src="js/lib/csvjson.js"></script>
     <script src="js/main.js"></script>
     <!-- <script src="js/lib/bootstrap.min.js"></script> -->
-    <script type="text/javascript">
-        function loadSampleData() {
-            var journeys = {};  // Station name, number of journeys, average cost, average time
-            $.getJSON("../data/oyster-data.json", function(data) {
-                // SAMPLE DATA IN JSON
-                // Balance: "9.95"
-                // Charge: "2.8"
-                // Credit: ""
-                // Date: "13-Aug-2013"
-                // End Time: "17:59"
-                // Journey/Action: "Brixton [London Underground] to Camden Town"
-                // Note: ""
-                // Start Time: "17:36"
-
-                // == {"Journey/Action": "Brixton [London Underground] to Camden Town", "Start Time": "17:36", "Charge": "2.8", "Note": "", "Credit": "", "End Time": "17:59", "Date": "13-Aug-2013", "Balance": "9.95"},
-
-                $.each(data, function(i, row) {
-                    if (parseFloat(row['Charge'])) {
-                        var stationname = row['Journey/Action'];
-                        if (!(stationname in journeys)) {
-                            // Add the station name to the journeys
-                            journeys[stationname] = {
-                                'count': 0,
-                                'time': 0,
-                                'price': 0
-                            };
-                        }
-                        var timeDiff = new Date(2013, 01, 01, row['End Time'].split(':')[0], row['End Time'].split(':')[1], 0, 0) - new Date(2013, 01, 01, row['Start Time'].split(':')[0], row['Start Time'].split(':')[1], 0, 0);
-                        journeys[stationname]['count'] += 1;
-                        journeys[stationname]['time'] += timeDiff;
-                        journeys[stationname]['price'] += parseFloat(row['Charge']);
-                    }
-                });
-                // console.log(journeys);
-                convert_stations_to_table(journeys, 2);
-            });
-        }
-
-        function strip_station_name(stationname) {
-            return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
-        }
-        function convert_stations_to_table(stationData, minJourneys){
-            var stationList = $('<table/>').appendTo('body');
-            $('<tr/>').html('<th>Staion Name</th><th>Count</th><th>Avg Time</th><th>Avg Price</th>').appendTo(stationList);
-            $.each(stationData, function(station, data) {
-                // console.log(station, data);
-                if (!minJourneys || data['count'] >= minJourneys) {
-                    var stationRow = $('<tr/>').appendTo(stationList);
-                    $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
-                    $('<td/>').text(data['count']).appendTo(stationRow);
-                    $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
-                    $('<td/>').text((data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
-                }
-            });
-        }
-    </script>
 </body>
 </html>
