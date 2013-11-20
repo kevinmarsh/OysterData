@@ -2,6 +2,9 @@
 Oyster Data by Kevin Marsh 2013
 
 * Upload the csv file via an upload button
+    * click on load file, select file which triggers 'readUpload' and converts
+      the file to JSON
+    * save the JSON to local storage
 * Convert the csv file to JSON (in the format of an array of journeys)
     {
         "Journey/Action": "Brixton [London Underground] to Camden Town",
@@ -27,6 +30,7 @@ function readUpload(reqFile){
         reader.onload = function (e) {
             var output_json = processCSV(e.target.result);
             printJourneyJSON(output_json[1]);
+            saveJourneyJSON(output_json);
         };  // End onload()
         reader.readAsText(reqFile.files[0]);
     }  // End if html5 filelist support
@@ -50,20 +54,22 @@ function processCSV(csvData) {
 }
 
 function saveJourneyJSON (data) {
+    // Save the JSON data in session storage
     // TODO: check that journeys aren't already set in sessionStorage
-
-    // var journeys = sessionStorage.getItem('journeys');
-    // if (journeys) {
-    //     journeys = JSON.parse(jsonData);
-    // } else {
-    //     journeys = [];
-    // }
-    // journeys += jsonData;
-    // sessionStorage.setItem('journeys', JSON.stringify(journeys));
-    if (typeof data !== 'string') {
-        data = JSON.stringify(data);
+    var headers = data[0];
+    var journeys = data[1];
+    var previousJourneys = sessionStorage.getItem('journeys');
+    if (!sessionStorage.getItem('journeys') && typeof headers !== 'string') {
+        headers = JSON.stringify(headers);
     }
-    sessionStorage.setItem('journeys', data);
+    sessionStorage.setItem('headers', headers);
+    if (typeof previousJourneys === 'string') {
+        journeys = journeys.concat(JSON.parse(previousJourneys));
+    }
+    if (typeof journeys !== 'string') {
+        journeys = JSON.stringify(journeys);
+    }
+    sessionStorage.setItem('journeys', journeys);
 }
 
 function printJourneyJSON (jsonData) {
