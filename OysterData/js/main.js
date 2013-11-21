@@ -2,9 +2,6 @@
 Oyster Data by Kevin Marsh 2013
 
 * Upload the csv file via an upload button
-    * click on load file, select file which triggers 'readUpload' and converts
-      the file to JSON
-    * save the JSON to local storage
 * Convert the csv file to JSON (in the format of an array of journeys)
     {
         "Journey/Action": "Brixton [London Underground] to Camden Town",
@@ -18,7 +15,7 @@ Oyster Data by Kevin Marsh 2013
     }
 * Save the journeys in session/local storage
 * Process the journeys into routes (Station A to Station B)
-
+* Save the routes in local storage
 
 *******************************************************************************/
 
@@ -29,7 +26,6 @@ function readUpload(reqFile){
         var reader = new FileReader();
         reader.onload = function (e) {
             var output_json = processCSV(e.target.result);
-            printJourneyJSON(output_json[1]);
             saveJourneyJSON(output_json);
         };  // End onload()
         reader.readAsText(reqFile.files[0]);
@@ -94,6 +90,16 @@ function printJourneyJSON (jsonData) {
     }).appendTo('body');
 }
 
+function processSessionData() {
+    var journeys = sessionStorage.getItem('journeys');
+    if (journeys === null) {
+        alert('No journeys saved in session storage');
+        return false;
+    }
+    journeys = JSON.parse(journeys);
+    printJourneyJSON(journeys);
+}
+
 $('button.upload').click(function() {
     $(this).siblings('input').click();
 });
@@ -102,6 +108,7 @@ $('input[type="file"]').change(function () {
     readUpload(this);
 });
 
+$('button#processsessiondata').on('click', processSessionData);
 
 /*******************************************************************************
 *******************************************************************************/
