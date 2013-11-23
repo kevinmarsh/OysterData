@@ -17,6 +17,10 @@ Oyster Data by Kevin Marsh 2013
 * Process the journeys into routes (Station A to Station B)
 * Save the routes in local storage
 
+* Show date range of journeys and totals
+* fix after midnight bug
+* Prevent process session storage from doubling items
+
 *******************************************************************************/
 
 "use strict";
@@ -104,24 +108,6 @@ function processSessionData() {
     }
 }
 
-
-$('button.upload').click(function() {
-    $(this).siblings('input').click();
-});
-
-$('input[type="file"]').change(function () {
-    readUpload(this);
-});
-
-$('button#processsessiondata').on('click', processSessionData);
-$('button#clearsessiondata').on('click', function() {
-    sessionStorage.clear();
-});
-
-if (!!sessionStorage.getItem('journeys')) {
-    processSessionData();
-}
-
 function unique_array(array) {
     // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
     var a = array.concat();
@@ -133,7 +119,6 @@ function unique_array(array) {
     }
     return a;
 }
-
 
 function convert_journeys_to_routes (journeys) {
     // Take the array of individual journeys and convert them to routes with aggregated data
@@ -180,12 +165,25 @@ function convert_stations_to_table(stationData, minJourneys){
     });
     $stationList.trigger('update').trigger('sorton', [[[1,1]]]);
 }
-$('#loadsampledata').on('click', function (){
-    $.getJSON("../data/oyster-data.json", function(jsonData) {
-        var routes = convert_journeys_to_routes(jsonData);
-        convert_stations_to_table(routes, 2);
-    });
+
+$('button.upload').click(function() {
+    $(this).siblings('input').click();
 });
 
-/*******************************************************************************
-*******************************************************************************/
+$('input[type="file"]').change(function () {
+    readUpload(this);
+    $('button.processsessiondata, button.clearsessiondata').attr('disabled', false);
+});
+
+$('button.processsessiondata').on('click', processSessionData);
+
+$('button.clearsessiondata').on('click', function() {
+    sessionStorage.clear();
+});
+
+if (!!sessionStorage.getItem('journeys')) {
+    // Load the session storage if there are journeys saved
+    processSessionData();
+} else {
+    $('button.processsessiondata, button.clearsessiondata').attr('disabled', true);
+}
