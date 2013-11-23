@@ -3,8 +3,10 @@
 <head>
     <title>Oyster Data</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
     <!-- Bootstrap -->
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/style.min.css" rel="stylesheet">
 </head>
 <body>
     <h1>CSV-JSON Test</h1>
@@ -26,8 +28,21 @@
     <hr>
 
     <h1>Osyter Data</h1>
-
+    <table class="table table-striped table-bordered table-condensed tablesorter" id="routes">
+        <thead>
+            <tr>
+                <th>Staion Name</th>
+                <th>Count</th>
+                <th>Avg Time</th>
+                <th>Total Time</th>
+                <th>Avg Cost</th>
+                <th>Total Cost</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
     <script src="js/lib/jquery-1.10.2.min.js"></script>
+    <script src="js/lib/jquery.tablesorter.min.js"></script>
     <script src="js/main.js"></script>
     <!-- <script src="js/lib/bootstrap.min.js"></script> -->
 </body>

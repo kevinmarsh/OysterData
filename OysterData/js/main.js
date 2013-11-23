@@ -51,7 +51,6 @@ function processCSV(csvData) {
 
 function saveJourneyJSON (data) {
     // Save the JSON data in session storage
-    // TODO: check that journeys aren't already set in sessionStorage
     var headers = data[0];
     var journeys = data[1];
     var previousJourneys = sessionStorage.getItem('journeys');
@@ -63,7 +62,7 @@ function saveJourneyJSON (data) {
         journeys = journeys.concat(JSON.parse(previousJourneys));
     }
     if (typeof journeys !== 'string') {
-        journeys = JSON.stringify(journeys);
+        journeys = JSON.stringify(unique_array(journeys));
     }
     sessionStorage.setItem('journeys', journeys);
 }
@@ -93,12 +92,18 @@ function printJourneyJSON (jsonData) {
 function processSessionData() {
     var journeys = sessionStorage.getItem('journeys');
     if (journeys === null) {
-        alert('No journeys saved in session storage');
         return false;
     }
     journeys = JSON.parse(journeys);
-    printJourneyJSON(journeys);
+    var routes = convert_journeys_to_routes(journeys);
+    convert_stations_to_table(routes);
+    if ($('#routes').is(":hidden")) {
+        $('#routes').tablesorter({
+            sortList: [[1,1]]
+        }).show();
+    }
 }
+
 
 $('button.upload').click(function() {
     $(this).siblings('input').click();
@@ -110,27 +115,22 @@ $('input[type="file"]').change(function () {
 
 $('button#processsessiondata').on('click', processSessionData);
 
-/*******************************************************************************
-*******************************************************************************/
-
-function loadSampleData() {
-    $.getJSON("../data/oyster-data.json", function(jsonData) {
-        // SAMPLE DATA IN JSON
-        // Balance: "9.95"
-        // Charge: "2.8"
-        // Credit: ""
-        // Date: "13-Aug-2013"
-        // End Time: "17:59"
-        // Journey/Action: "Brixton [London Underground] to Camden Town"
-        // Note: ""
-        // Start Time: "17:36"
-
-        // == {"Journey/Action": "Brixton [London Underground] to Camden Town", "Start Time": "17:36", "Charge": "2.8", "Note": "", "Credit": "", "End Time": "17:59", "Date": "13-Aug-2013", "Balance": "9.95"},
-
-        var routes = convert_journeys_to_routes(jsonData);
-        convert_stations_to_table(routes, 2);
-    });
+if (!!sessionStorage.getItem('journeys')) {
+    processSessionData();
 }
+
+function unique_array(array) {
+    // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+    return a;
+};
+
 
 function convert_journeys_to_routes (journeys) {
     // Take the array of individual journeys and convert them to routes with aggregated data
@@ -162,20 +162,27 @@ function strip_station_name(stationname) {
     return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
 }
 function convert_stations_to_table(stationData, minJourneys){
-    var stationList = $('<table/>').appendTo('body');
-    $('<tr/>').html('<th>Staion Name</th><th>Count</th><th>Avg Time</th><th>Avg Price</th>').appendTo(stationList);
+    var $stationList = $('#routes');
+    $('#routes tbody tr').remove();
     $.each(stationData, function(station, data) {
-        // console.log(station, data);
         if (!minJourneys || data['count'] >= minJourneys) {
-            var stationRow = $('<tr/>').appendTo(stationList);
+            var stationRow = $('<tr/>').appendTo($stationList);
             $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
             $('<td/>').text(data['count']).appendTo(stationRow);
             $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
-            $('<td/>').text((data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
+            $('<td/>').text((data['time'] / 1000 / 60).toFixed(2)).appendTo(stationRow);
+            $('<td/>').text('£' + (data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
+            $('<td/>').text('£' + (data['price']).toFixed(2)).appendTo(stationRow);
         }
     });
+    $stationList.trigger('update').trigger('sorton', [[[1,1]]]);
 }
-$('#loadsampledata').on('click', loadSampleData);
+$('#loadsampledata').on('click', function (){
+    $.getJSON("../data/oyster-data.json", function(jsonData) {
+        var routes = convert_journeys_to_routes(jsonData);
+        convert_stations_to_table(routes, 2);
+    });
+});
 
 /*******************************************************************************
 *******************************************************************************/
