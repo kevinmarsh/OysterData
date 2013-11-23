@@ -114,6 +114,9 @@ $('input[type="file"]').change(function () {
 });
 
 $('button#processsessiondata').on('click', processSessionData);
+$('button#clearsessiondata').on('click', function() {
+    sessionStorage.clear();
+});
 
 if (!!sessionStorage.getItem('journeys')) {
     processSessionData();
@@ -129,7 +132,7 @@ function unique_array(array) {
         }
     }
     return a;
-};
+}
 
 
 function convert_journeys_to_routes (journeys) {
