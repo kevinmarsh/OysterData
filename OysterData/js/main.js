@@ -22,168 +22,148 @@ Oyster Data by Kevin Marsh 2013
 * Prevent process session storage from doubling items
 
 *******************************************************************************/
+$(function(){
+    "use strict";
 
-"use strict";
-
-function readUpload(reqFile){
-    if(reqFile.files && reqFile.files[0]){
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var output_json = processCSV(e.target.result);
-            saveJourneyJSON(output_json);
-        };  // End onload()
-        reader.readAsText(reqFile.files[0]);
-    }  // End if html5 filelist support
-}
-
-function processCSV(csvData) {
-    var headerRow;
-    var rows = [];
-    $.each(csvData.split('\n'), function(index, row) {
-        var currentRow = {};
-        if (index <= 1) {
-            headerRow = row.split(',');
-        } else {
-            $.each(row.split(','), function(i, v) {
-                currentRow[headerRow[i]] = v;
-            });
-            rows.push(currentRow);
-        }
-    });
-    return [headerRow, rows];
-}
-
-function saveJourneyJSON (data) {
-    // Save the JSON data in session storage
-    var headers = data[0];
-    var journeys = data[1];
-    var previousJourneys = sessionStorage.getItem('journeys');
-    if (!sessionStorage.getItem('journeys') && typeof headers !== 'string') {
-        headers = JSON.stringify(headers);
+    function readUpload(reqFile){
+        if(reqFile.files && reqFile.files[0]){
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var output_json = processCSV(e.target.result);
+                saveJourneyJSON(output_json);
+                processSessionData();
+            };  // End onload()
+            reader.readAsText(reqFile.files[0]);
+        }  // End if html5 filelist support
     }
-    sessionStorage.setItem('headers', headers);
-    if (typeof previousJourneys === 'string') {
-        journeys = journeys.concat(JSON.parse(previousJourneys));
-    }
-    if (typeof journeys !== 'string') {
-        journeys = JSON.stringify(unique_array(journeys));
-    }
-    sessionStorage.setItem('journeys', journeys);
-}
 
-function printJourneyJSON (jsonData) {
-    var journeys = {};
-    var items = [];
-    $.each(jsonData, function(row) {
-        $.each(jsonData[row], function(key, val) {
-            if (key === 'Journey/Action') {
-                if (val in journeys) {
-                    journeys[val] += 1;
-                } else {
-                    journeys[val] = 1;
-                }
+    function processCSV(csvData) {
+        var headerRow;
+        var rows = [];
+        $.each(csvData.split('\n'), function(index, row) {
+            var currentRow = {};
+            if (index <= 1) {
+                headerRow = row.split(',');
+            } else {
+                $.each(row.split(','), function(i, v) {
+                    currentRow[headerRow[i]] = v;
+                });
+                rows.push(currentRow);
             }
-            items.push('<li>' + key + ': ' + val + '</li>');
         });
-        items.push('<li>//////////////////////////////////////////////////////////////</li>');
-    });
-    $('<ul/>', {
-        'class': 'my-new-list',
-        html: items.join('')
-    }).appendTo('body');
-}
-
-function processSessionData() {
-    var journeys = sessionStorage.getItem('journeys');
-    if (journeys === null) {
-        return false;
+        return [headerRow, rows];
     }
-    journeys = JSON.parse(journeys);
-    var routes = convert_journeys_to_routes(journeys);
-    convert_stations_to_table(routes);
-    if ($('#routes').is(":hidden")) {
-        $('#routes').tablesorter({
-            sortList: [[1,1]]
-        }).show();
-    }
-}
 
-function unique_array(array) {
-    // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
-    var a = array.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(a[i] === a[j])
-                a.splice(j--, 1);
+    function saveJourneyJSON (data) {
+        // Save the JSON data in session storage
+        var headers = data[0];
+        var journeys = data[1];
+        var previousJourneys = sessionStorage.getItem('journeys');
+        if (!sessionStorage.getItem('journeys') && typeof headers !== 'string') {
+            headers = JSON.stringify(headers);
+        }
+        sessionStorage.setItem('headers', headers);
+        if (typeof previousJourneys === 'string') {
+            journeys = journeys.concat(JSON.parse(previousJourneys));
+        }
+        if (typeof journeys !== 'string') {
+            journeys = JSON.stringify(unique_array(journeys));
+        }
+        sessionStorage.setItem('journeys', journeys);
+    }
+
+    function processSessionData() {
+        var journeys = sessionStorage.getItem('journeys');
+        if (journeys === null) {
+            return false;
+        }
+        journeys = JSON.parse(journeys);
+        var routes = convert_journeys_to_routes(journeys);
+        convert_stations_to_table(routes);
+        if ($('#routes').is(":hidden")) {
+            $('#routes').tablesorter({
+                sortList: [[1,1]]
+            }).show();
         }
     }
-    return a;
-}
 
-function convert_journeys_to_routes (journeys) {
-    // Take the array of individual journeys and convert them to routes with aggregated data
-    var routes = {};  // Station name, number of journeys, average cost, average time
-    $.each(journeys, function(i, row) {
-        if (parseFloat(row['Charge'])) {
-            // Skip any ones that are bus journeys or top ups
-            var stationname = row['Journey/Action'];
-            if (!(stationname in routes)) {
-                // Add the station name to the routes
-                routes[stationname] = {
-                    'count': 0,
-                    'time': 0,
-                    'price': 0
-                };
+    function unique_array(array) {
+        // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
+        var a = array.concat();
+        for(var i=0; i<a.length; ++i) {
+            for(var j=i+1; j<a.length; ++j) {
+                if(a[i] === a[j])
+                    a.splice(j--, 1);
             }
-            var endTime = new Date(row['Date'] + " " + row['End Time']);
-            var startTime = new Date(row['Date'] + " " + row['Start Time']);
-            var timeDiff = endTime - startTime;
-            routes[stationname]['count'] += 1;
-            routes[stationname]['time'] += timeDiff;
-            routes[stationname]['price'] += parseFloat(row['Charge']);
         }
+        return a;
+    }
+
+    function convert_journeys_to_routes (journeys) {
+        // Take the array of individual journeys and convert them to routes with aggregated data
+        var routes = {};  // Station name, number of journeys, average cost, average time
+        $.each(journeys, function(i, row) {
+            if (parseFloat(row['Charge'])) {
+                // Skip any ones that are bus journeys or top ups
+                var stationname = row['Journey/Action'];
+                if (!(stationname in routes)) {
+                    // Add the station name to the routes
+                    routes[stationname] = {
+                        'count': 0,
+                        'time': 0,
+                        'price': 0
+                    };
+                }
+                var endTime = new Date(row['Date'] + " " + row['End Time']);
+                var startTime = new Date(row['Date'] + " " + row['Start Time']);
+                var timeDiff = endTime - startTime;
+                routes[stationname]['count'] += 1;
+                routes[stationname]['time'] += timeDiff;
+                routes[stationname]['price'] += parseFloat(row['Charge']);
+            }
+        });
+        return routes;
+    }
+
+    function strip_station_name(stationname) {
+        return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
+    }
+    function convert_stations_to_table(stationData, minJourneys){
+        var $stationList = $('#routes');
+        $('#routes tbody tr').remove();
+        $.each(stationData, function(station, data) {
+            if (!minJourneys || data['count'] >= minJourneys) {
+                var stationRow = $('<tr/>').appendTo($stationList);
+                $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
+                $('<td/>').text(data['count']).appendTo(stationRow);
+                $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
+                $('<td/>').text((data['time'] / 1000 / 60).toFixed(2)).appendTo(stationRow);
+                $('<td/>').text('£' + (data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
+                $('<td/>').text('£' + (data['price']).toFixed(2)).appendTo(stationRow);
+            }
+        });
+        $stationList.trigger('update').trigger('sorton', [[[1,1]]]);
+    }
+
+    $('button.upload').click(function() {
+        $(this).siblings('input').click();
     });
-    return routes;
-}
 
-function strip_station_name(stationname) {
-    return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
-}
-function convert_stations_to_table(stationData, minJourneys){
-    var $stationList = $('#routes');
-    $('#routes tbody tr').remove();
-    $.each(stationData, function(station, data) {
-        if (!minJourneys || data['count'] >= minJourneys) {
-            var stationRow = $('<tr/>').appendTo($stationList);
-            $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
-            $('<td/>').text(data['count']).appendTo(stationRow);
-            $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
-            $('<td/>').text((data['time'] / 1000 / 60).toFixed(2)).appendTo(stationRow);
-            $('<td/>').text('£' + (data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
-            $('<td/>').text('£' + (data['price']).toFixed(2)).appendTo(stationRow);
-        }
+    $('input[type="file"]').change(function () {
+        readUpload(this);
+        $('button.processsessiondata, button.clearsessiondata').attr('disabled', false);
     });
-    $stationList.trigger('update').trigger('sorton', [[[1,1]]]);
-}
 
-$('button.upload').click(function() {
-    $(this).siblings('input').click();
-});
+    $('button.processsessiondata').on('click', processSessionData);
 
-$('input[type="file"]').change(function () {
-    readUpload(this);
-    $('button.processsessiondata, button.clearsessiondata').attr('disabled', false);
-});
+    $('button.clearsessiondata').on('click', function() {
+        sessionStorage.clear();
+    });
 
-$('button.processsessiondata').on('click', processSessionData);
-
-$('button.clearsessiondata').on('click', function() {
-    sessionStorage.clear();
-});
-
-if (!!sessionStorage.getItem('journeys')) {
-    // Load the session storage if there are journeys saved
-    processSessionData();
-} else {
-    $('button.processsessiondata, button.clearsessiondata').attr('disabled', true);
-}
+    if (!!sessionStorage.getItem('journeys')) {
+        // Load the session storage if there are journeys saved
+        processSessionData();
+    } else {
+        $('button.processsessiondata, button.clearsessiondata').attr('disabled', true);
+    }
+})();
