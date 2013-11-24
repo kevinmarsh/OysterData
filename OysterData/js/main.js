@@ -116,6 +116,10 @@ $(function(){
                 }
                 var endTime = new Date(row['Date'] + " " + row['End Time']);
                 var startTime = new Date(row['Date'] + " " + row['Start Time']);
+                if (startTime > endTime) {
+                    // Then the trip began before midnight and ended after
+                    endTime = new Date(endTime.valueOf() + 86400000);
+                }
                 var timeDiff = endTime - startTime;
                 routes[stationname]['count'] += 1;
                 routes[stationname]['time'] += timeDiff;
@@ -128,6 +132,7 @@ $(function(){
     function strip_station_name(stationname) {
         return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
     }
+
     function convert_stations_to_table(stationData, minJourneys){
         var $stationList = $('#routes');
         $('#routes tbody tr').remove();
