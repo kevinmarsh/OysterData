@@ -175,4 +175,4 @@ $(function(){
     } else {
         $('button.processsessiondata, button.clearsessiondata').attr('disabled', true);
     }
-})();
+});
