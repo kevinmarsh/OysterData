@@ -26,6 +26,10 @@ $(function(){
     "use strict";
 
     function readUpload(reqFile){
+        if($(reqFile).val().split('.').pop().toLowerCase() !== 'csv') {
+            // Trivially check that it is the correct file type
+            alert('Sorry only CSV files are accepted at this time.');
+        }
         if(reqFile.files && reqFile.files[0]){
             var reader = new FileReader();
             reader.onload = function (e) {
