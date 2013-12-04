@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
     <link rel="stylesheet" href="css/bootstrap-responsive.min.css" media="screen">
+    <link rel="stylesheet" href="css/sortable-theme-light.css" />
     <link rel="stylesheet" href="css/style.min.css">
 
     <!--[if lt IE 9]>
@@ -34,16 +35,14 @@
         <button class="clearsessiondata">Clear Session Data</button>
     </p>
 
-
-
     <hr>
 
     <h1>Osyter Data</h1>
-    <table class="table table-striped table-bordered table-condensed tablesorter" id="routes">
+    <table id="routes" class="sortable-theme-light" data-sortable>
         <thead>
             <tr>
                 <th>Staion Name</th>
-                <th>Count</th>
+                <th data-default-sort="descending">Count</th>
                 <th>Avg Time</th>
                 <th>Total Time</th>
                 <th>Avg Cost</th>
@@ -55,7 +54,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/lib/jquery-1.10.2.min.js"><\/script>')</script>
-    <script src="js/lib/jquery.tablesorter.min.js"></script>
+    <script src="js/lib/sortable.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

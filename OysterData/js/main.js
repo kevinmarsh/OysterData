@@ -84,11 +84,9 @@ $(function(){
         journeys = JSON.parse(journeys);
         var routes = convert_journeys_to_routes(journeys);
         convert_stations_to_table(routes);
-        if ($('#routes').is(":hidden")) {
-            $('#routes').tablesorter({
-                sortList: [[1,1]]
-            }).show();
-        }
+        $('#routes').show();
+        // TODO: Do an init sort of the table
+        // $('#routes th:nth-child(2)').click();
     }
 
     function unique_array(array) {

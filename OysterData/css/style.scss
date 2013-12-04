@@ -3,21 +3,10 @@ body {
 }
 table#routes {
     display: none;
-    th {
-        &.header {
-            background-image: url(../img/small.gif);
-            cursor: pointer;
-            background-repeat: no-repeat;
-            background-position: center left;
-            padding-left: 20px;
-        }
-        &.headerSortDown {
-            background-image: url(../img/small_desc.gif);
-            background-color: #3399FF;
-        }
-        &.headerSortUp {
-            background-image: url(../img/small_asc.gif);
-            background-color: #3399FF;
-        }
+    table[data-sortable] th {
+        padding: 9px;
+    }
+    tbody tr:nth-child(odd) {
+        background-color: #FFFFFF;
     }
 }
