@@ -85,9 +85,9 @@ $(function(){
         var routes = convert_journeys_to_routes(journeys);
         var minJourneys = $('input[name="minjourneys"]').val();
         convert_stations_to_table(routes, minJourneys);
+        $('#routes').attr('data-sortable', 'data-sortable');
+        Sortable.init();
         $('.processeddata').show();
-        // TODO: Do an init sort of the table
-        // $('#routes th:nth-child(2)').click();
     }
 
     function unique_array(array) {
@@ -170,6 +170,8 @@ $(function(){
         $(this).prop('disabled', 'disabled')
         $('.processsessiondata').prop('disabled', 'disabled')
         $('.processeddata').hide();
+        $("#routes").removeAttr('data-sortable');
+        Sortable.init();
     });
 
     if (!!sessionStorage.getItem('journeys')) {
