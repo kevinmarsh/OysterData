@@ -138,19 +138,20 @@ $(function(){
 
     function convert_stations_to_table(stationData, minJourneys){
         var $stationList = $('#routes');
+        // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $('#routes tbody tr').remove();
         $.each(stationData, function(station, data) {
             if (!minJourneys || data['count'] >= minJourneys) {
                 var stationRow = $('<tr/>').appendTo($stationList);
-                $('<td/>').html(strip_station_name(station)).appendTo(stationRow);
-                $('<td/>').text(data['count']).appendTo(stationRow);
-                $('<td/>').text((data['time'] / 1000 / 60 / data['count']).toFixed(2)).appendTo(stationRow);
-                $('<td/>').text((data['time'] / 1000 / 60).toFixed(2)).appendTo(stationRow);
-                $('<td/>').text('£' + (data['price'] / data['count']).toFixed(2)).appendTo(stationRow);
-                $('<td/>').text('£' + (data['price']).toFixed(2)).appendTo(stationRow);
+                var avg_time = (data['time'] / 1000 / 60 / data['count']).toFixed(2);
+                var total_time = (data['time'] / 1000 / 60).toFixed(2);
+                var avg_cost = '£' + (data['price'] / data['count']).toFixed(2);
+                var total_cost = '£' + (data['price']).toFixed(2);
+                $.each([strip_station_name(station), data['count'], avg_time, total_time, avg_cost, total_cost], function(index, value) {
+                    $('<td/>').html(value).attr('data-value', value.toString().replace('£', '')).appendTo(stationRow);
+                });
             }
         });
-        $stationList.trigger('update').trigger('sorton', [[[1,1]]]);
     }
 
     $('button.upload').click(function() {
@@ -159,7 +160,7 @@ $(function(){
 
     $('input[type="file"]').change(function () {
         readUpload(this);
-        $('button.processsessiondata, button.clearsessiondata').attr('disabled', false);
+        $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
     });
 
     $('button.processsessiondata').on('click', processSessionData);
@@ -172,6 +173,6 @@ $(function(){
         // Load the session storage if there are journeys saved
         processSessionData();
     } else {
-        $('button.processsessiondata, button.clearsessiondata').attr('disabled', true);
+        $('button.processsessiondata, button.clearsessiondata').prop('disabled', true);
     }
 });
