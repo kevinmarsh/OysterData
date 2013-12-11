@@ -138,8 +138,8 @@ $(function(){
 
     function convert_stations_to_table(stationData, minJourneys){
         var $stationList = $('#routes');
-        // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $('#routes tbody tr').remove();
+        // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $.each(stationData, function(station, data) {
             if (!minJourneys || data['count'] >= minJourneys) {
                 var stationRow = $('<tr/>').appendTo($stationList);
@@ -174,5 +174,8 @@ $(function(){
         processSessionData();
     } else {
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', true);
+    }
+    if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
+        $('#notchrome').slideDown();
     }
 });

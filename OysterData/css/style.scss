@@ -1,6 +1,13 @@
 body {
     padding: 1em;
 }
+#notchrome {
+    display: none;
+}
+input[type="number"] {
+    margin: 0;
+    width: 2em;
+}
 table#routes {
     display: none;
     tbody tr:nth-child(odd) {

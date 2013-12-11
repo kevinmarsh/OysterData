@@ -23,21 +23,23 @@
         <div class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</div>
     <![endif]-->
 
-    <div class="alert alert-warning">This may be a bit broken in non-Chromium browsers due to date parsing in Javascript.</div>
+    <div class="alert alert-warning" id="notchrome">Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.</div>
 
-    <h1>CSV-JSON Test</h1>
+    <div class="page-header">
+        <h1>TfL Oyster Data <small>Aggregate your tube and bus journeys in London</small></h1>
+    </div>
 
     <p id="uploadcsv">
-        <button class="upload">Upload CSV</button>
+        <button class="upload btn btn-primary">Upload CSV</button>
         <input type="file" name="imagefile" size="0" style="display:none;" />
     </p>
 
     <p>
-        <button class="processsessiondata">Process Session Data</button>
+        <button class="processsessiondata btn btn-primary">Process Session Data</button>
         <input type="number" name="minjourneys" value="2" min="1" />
     </p>
     <p>
-        <button class="clearsessiondata">Clear Session Data</button>
+        <button class="clearsessiondata btn btn-warning">Clear Session Data</button>
     </p>
 
     <hr>
