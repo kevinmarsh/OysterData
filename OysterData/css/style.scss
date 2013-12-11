@@ -1,11 +1,8 @@
 body {
-    padding: 0 10px;
+    padding: 0 1em;
 }
 table#routes {
     display: none;
-    table[data-sortable] th {
-        padding: 9px;
-    }
     tbody tr:nth-child(odd) {
         background-color: #FFFFFF;
     }
