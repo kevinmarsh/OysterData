@@ -85,7 +85,7 @@ $(function(){
         var routes = convert_journeys_to_routes(journeys);
         var minJourneys = $('input[name="minjourneys"]').val();
         convert_stations_to_table(routes, minJourneys);
-        $('#routes').show();
+        $('.processeddata').show();
         // TODO: Do an init sort of the table
         // $('#routes th:nth-child(2)').click();
     }
@@ -167,6 +167,9 @@ $(function(){
 
     $('button.clearsessiondata').on('click', function() {
         sessionStorage.clear();
+        $(this).prop('disabled', 'disabled')
+        $('.processsessiondata').prop('disabled', 'disabled')
+        $('.processeddata').hide();
     });
 
     if (!!sessionStorage.getItem('journeys')) {
@@ -176,6 +179,7 @@ $(function(){
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', true);
     }
     if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
+        // Show the browser warning
         $('#notchrome').slideDown();
     }
 });

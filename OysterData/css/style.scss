@@ -1,16 +1,28 @@
 body {
     padding: 1em;
 }
+
 #notchrome {
     display: none;
 }
+
 input[type="number"] {
     margin: 0;
     width: 2em;
 }
-table#routes {
+
+.processeddata {
     display: none;
-    tbody tr:nth-child(odd) {
-        background-color: #FFFFFF;
+
+    table#routes {
+        tbody tr {
+            &:nth-child(odd) {
+                background-color: #FFFFFF;
+            }
+            &:hover {
+                background-color: #FCF8E3;
+            }
+        }
     }
 }
+
