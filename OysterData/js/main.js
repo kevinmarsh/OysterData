@@ -85,7 +85,7 @@ $(function(){
         var routes = convert_journeys_to_routes(journeys);
         var minJourneys = $('input[name="minjourneys"]').val();
         convert_stations_to_table(routes, minJourneys);
-        $('#routes').attr('data-sortable', 'data-sortable');
+        $('#routes').attr('data-sortable', 'data-sortable').removeAttr('data-sortable-initialized');
         Sortable.init();
         $('.processeddata').show();
     }
@@ -139,7 +139,7 @@ $(function(){
 
     function convert_stations_to_table(stationData, minJourneys){
         var $stationList = $('#routes');
-        $('#routes tbody tr').remove();
+        $('#routes tbody').empty();
         // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $.each(stationData, function(station, data) {
             if (!minJourneys || data['count'] >= minJourneys) {
@@ -183,6 +183,6 @@ $(function(){
     }
     if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
         // Show the browser warning
-        $('#notchrome').slideDown();
+        $('#alertbox').slideDown().text('Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.');
     }
 });

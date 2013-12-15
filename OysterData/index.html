@@ -19,46 +19,50 @@
     <![endif]-->
 </head>
 <body>
-    <!--[if lt IE 7]>
-        <div class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</div>
-    <![endif]-->
+    <div class="container body-wrapper">
+        <!--[if lt IE 7]>
+            <div class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</div>
+        <![endif]-->
 
-    <div class="alert alert-warning" id="notchrome">Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.</div>
+        <div class="alert alert-warning" id="alertbox"></div>
 
-    <div class="page-header">
-        <h1>TfL Oyster Data <small>Aggregate your tube and bus journeys in London</small></h1>
-    </div>
+        <div class="container page-header">
+            <h1>TfL Oyster Data <small>Aggregate your tube and bus journeys in London</small></h1>
+        </div>
 
-    <p id="uploadcsv">
-        <button class="upload btn btn-primary">Upload CSV</button>
-        <input type="file" name="imagefile" size="0" style="display:none;" />
-    </p>
+        <p class="alert alert-warning">Note that no data is sent back to the server and is processed directly in the browser only using Javascript. Data is stored in session storage</p>
 
-    <p>
-        <button class="processsessiondata btn btn-primary">Process Session Data</button>
-        <input type="number" name="minjourneys" value="2" min="1" />
-    </p>
-    <p>
-        <button class="clearsessiondata btn btn-warning">Clear Session Data</button>
-    </p>
+        <p id="uploadcsv">
+            <button class="upload btn btn-primary">Upload CSV</button>
+            <input type="file" name="imagefile" size="0" style="display:none;" />
+        </p>
 
-    <hr>
+        <p>
+            <button class="processsessiondata btn btn-primary">Process Session Data</button>
+            <input type="number" name="minjourneys" value="2" min="1" />
+        </p>
+        <p>
+            <button class="clearsessiondata btn btn-warning">Clear Session Data</button>
+        </p>
 
-    <div class="processeddata">
-        <h1>Osyter Data</h1>
-        <table id="routes" class="sortable-theme-light">
-            <thead>
-                <tr>
-                    <th>Staion Name</th>
-                    <th data-default-sort="descending">Count</th>
-                    <th>Avg Time</th>
-                    <th>Total Time</th>
-                    <th>Avg Cost</th>
-                    <th>Total Cost</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <hr>
+
+        <div class="processeddata">
+            <h1>Osyter Data</h1>
+            <table id="routes" class="sortable-theme-light">
+                <thead>
+                    <tr>
+                        <th>Staion Name</th>
+                        <th data-default-sort="descending">Count</th>
+                        <th>Avg Time</th>
+                        <th>Total Time</th>
+                        <th>Avg Cost</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
