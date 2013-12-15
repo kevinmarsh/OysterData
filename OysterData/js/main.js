@@ -133,7 +133,8 @@ $(function(){
     }
 
     function strip_station_name(stationname) {
-        return stationname.replace(' [London Underground]', '<span title="London Underground">*</span>').replace(' [London Underground / National Rail]', '<span title="London Underground / National Rail">*</span>').replace(' [National Rail]', '<span title="National Rail">*</span>');
+        // Gets rid of the superfluous "[London Underground]" from the station name
+        return stationname.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>')
     }
 
     function convert_stations_to_table(stationData, minJourneys){
