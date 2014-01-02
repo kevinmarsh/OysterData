@@ -155,8 +155,8 @@ $(function(){
         });
     }
 
-    $('button.upload').click(function() {
-        $(this).siblings('input').click();
+    $('.uploadcsv').click(function() {
+        $(this).children('input')[0].click();
     });
 
     $('input[type="file"]').change(function () {
@@ -190,12 +190,18 @@ $(function(){
         revert: 'invalid'
     });
     $('#droppable').droppable({
+        hoverClass: 'ui-state-active',
+        activeClass: 'ui-state-hover',
         drop: function (event, ui) {
-            $(this)
-                .addClass('ui-state-highlight')
-                .find('p')
-                .text('Dropped!');
-        },
-        revert: 'invalid'
+            $(this).addClass('ui-state-highlight')
+            $('#draggable').addClass('ui-state-dropped')
+            // Load the sample data
+            $.get('../data/sample_journeys.csv', function(data) {
+                var output_json = processCSV(data);
+                saveJourneyJSON(output_json);
+                processSessionData();
+            });
+        }
+        // revert: 'invalid'
     });
 });
