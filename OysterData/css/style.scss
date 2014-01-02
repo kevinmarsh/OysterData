@@ -6,6 +6,30 @@ body {
     display: none;
 }
 
+form {
+    border: 5px dashed rgba(82, 82, 82, 0.5);
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+        -ms-border-radius: 5px;
+         -o-border-radius: 5px;
+            border-radius: 5px;
+    -webkit-transition: border 0.3s linear;
+       -moz-transition: border 0.3s linear;
+         -o-transition: border 0.3s linear;
+            transition: border 0.3s linear;
+
+    &:hover {
+        border-color: rgba(82, 82, 82, 1);
+        cursor: pointer;
+    }
+
+    p {
+        line-height: 5em;
+        margin-bottom: 0;
+        text-align: center;
+    }
+}
+
 input[type="number"] {
     margin: 0;
     width: 2em;

@@ -32,10 +32,20 @@
 
         <p class="alert alert-warning">Note that no data is sent back to the server and is processed directly in the browser only using Javascript. Data is stored in session storage</p>
 
-        <p id="uploadcsv">
-            <button class="upload btn btn-primary">Upload CSV</button>
+        <p class="uploadcsv">
+            <button class="upload">Upload CSV</button>
             <input type="file" name="imagefile" size="0" style="display:none;" />
         </p>
+
+<div class="container">http://placehold.it/350x150
+    <form class="span8 ui-droppable" id="droppable">
+          <p>Drop here</p>
+    </form>
+
+    <div class="ui-widget-content" id="draggable">
+        <img src="http://placehold.it/50&text=SVG" />
+    </div>
+</div>
 
         <p>
             <button class="processsessiondata btn btn-primary">Process Session Data</button>
@@ -67,6 +77,7 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/lib/jquery-1.10.2.min.js"><\/script>')</script>
+    <script src="js/lib/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="js/lib/sortable.js"></script>
     <script src="js/main.js"></script>
 </body>

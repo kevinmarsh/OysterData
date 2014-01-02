@@ -185,4 +185,17 @@ $(function(){
         // Show the browser warning
         $('#alertbox').slideDown().text('Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.');
     }
+
+    $('#draggable').draggable({
+        revert: 'invalid'
+    });
+    $('#droppable').droppable({
+        drop: function (event, ui) {
+            $(this)
+                .addClass('ui-state-highlight')
+                .find('p')
+                .text('Dropped!');
+        },
+        revert: 'invalid'
+    });
 });
