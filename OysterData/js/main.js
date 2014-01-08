@@ -1,6 +1,7 @@
 /*******************************************************************************
-Oyster Data by Kevin Marsh 2013
-
+*
+* Oyster Data by Kevin Marsh 2014
+*
 * Upload the csv file via an upload button
 * Convert the csv file to JSON (in the format of an array of journeys)
     {
@@ -16,14 +17,19 @@ Oyster Data by Kevin Marsh 2013
 * Save the journeys in session/local storage
 * Process the journeys into routes (Station A to Station B)
 * Save the routes in local storage
-
+*
 * Show date range of journeys and totals
 * fix after midnight bug
 * Prevent process session storage from doubling items
-
+*
 *******************************************************************************/
+
 $(function(){
     "use strict";
+
+/*******************************************************************************
+* Functions
+*******************************************************************************/
 
     function readUpload(reqFile){
         if($(reqFile).val().split('.').pop().toLowerCase() !== 'csv') {
@@ -177,7 +183,11 @@ $(function(){
         $(selector + ':visible:even').addClass('alt');
     }
 
-    $('.uploadcsv').click(function() {
+/*******************************************************************************
+* Event Handlers
+*******************************************************************************/
+
+    $('.uploadcsv').on('click', function() {
         $(this).children('input')[0].click();
     });
 
@@ -189,12 +199,39 @@ $(function(){
 
     $('button.clearsessiondata').on('click', function() {
         sessionStorage.clear();
-        $(this).prop('disabled', 'disabled')
-        $('.processsessiondata').prop('disabled', 'disabled')
+        $(this).prop('disabled', 'disabled');
+        $('.processsessiondata').prop('disabled', 'disabled');
         $('.processeddata').hide();
         $("#routes").removeAttr('data-sortable');
         Sortable.init();
     });
+
+    $('#filter').on('keyup', function(event) {
+        if (event.keyCode === 27 || $(this).val() === '') {
+            // If esc is pressed we want to clear the value of search box
+            // and show all rows
+            $(this).val('');
+            $('tbody tr').addClass('visible');
+        } else {
+            filter('tbody tr', $(this).val());
+        }
+    });
+
+    $('label span').on('click', function() {
+        // Clear the filter input when the 'x' is clicked
+        $(this).siblings('input').val('');
+        $('tbody tr').addClass('visible');
+        set_alt_row('tbody tr');
+    });
+
+    $('th').on('click', function(){
+        // Add an event handler *after* the columns have been sorted
+        set_alt_row('tbody tr');
+    });
+
+/*******************************************************************************
+* Initialize
+*******************************************************************************/
 
     if (!!sessionStorage.getItem('journeys')) {
         // Load the session storage if there are journeys saved
@@ -202,6 +239,7 @@ $(function(){
     } else {
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', true);
     }
+
     if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
         // Show the browser warning
         $('#alertbox').slideDown().text('Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.');
@@ -210,6 +248,7 @@ $(function(){
     $('#draggable').draggable({
         revert: 'invalid'
     });
+
     $('#droppable').droppable({
         hoverClass: 'ui-state-active',
         activeClass: 'ui-state-hover',
@@ -226,32 +265,5 @@ $(function(){
                 $(this).parent('.container').slideUp();
             }
         }
-        // revert: 'invalid'
-    });
-
-    $('#filter').on('keyup', function(event) {
-        //if esc is pressed or nothing is entered
-        if (event.keyCode === 27 || $(this).val() === '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tbody tr').addClass('visible');
-        } else {
-            //if there is text, lets filter
-            filter('tbody tr', $(this).val());
-        }
-    });
-    $('label span').on('click', function() {
-        // Clear the filter input when the 'x' is clicked
-        $(this).siblings('input').val('');
-        $('tbody tr').addClass('visible');
-        set_alt_row('tbody tr');
-    });
-
-    $('th').on('click', function(){
-        // Add an event handler *after* the columns have been sorted
-        set_alt_row('tbody tr');
     });
 });
