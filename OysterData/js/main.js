@@ -88,6 +88,8 @@ $(function(){
         $('#routes').attr('data-sortable', 'data-sortable').removeAttr('data-sortable-initialized');
         Sortable.init();
         $('.processeddata').show();
+        $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
+        set_alt_row('tbody tr');
     }
 
     function unique_array(array) {
@@ -143,7 +145,7 @@ $(function(){
         // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $.each(stationData, function(station, data) {
             if (!minJourneys || data['count'] >= minJourneys) {
-                var stationRow = $('<tr/>').appendTo($stationList);
+                var stationRow = $('<tr/>').addClass('visible').appendTo($stationList);
                 var avg_time = (data['time'] / 1000 / 60 / data['count']).toFixed(2);
                 var total_time = (data['time'] / 1000 / 60).toFixed(2);
                 var avg_cost = '£' + (data['price'] / data['count']).toFixed(2);
@@ -155,13 +157,32 @@ $(function(){
         });
     }
 
+    function filter(selector, query) {
+        // http://net.tutsplus.com/tutorials/javascript-ajax/using-jquery-to-manipulate-and-filter-data/
+        query = $.trim(query); //trim white space
+        query = query.replace(/ /gi, '|'); //add OR for regex query
+
+        $(selector).each(function() {
+            if ($(this).text().search(new RegExp(query, "i")) < 0) {
+                $(this).removeClass('visible');
+            } else {
+               $(this).addClass('visible');
+            }
+        });
+        set_alt_row(selector);
+    }
+
+    function set_alt_row(selector) {
+        $('.alt').removeClass('alt');
+        $(selector + ':visible:even').addClass('alt');
+    }
+
     $('.uploadcsv').click(function() {
         $(this).children('input')[0].click();
     });
 
     $('input[type="file"]').change(function () {
         readUpload(this);
-        $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
     });
 
     $('button.processsessiondata').on('click', processSessionData);
@@ -193,15 +214,44 @@ $(function(){
         hoverClass: 'ui-state-active',
         activeClass: 'ui-state-hover',
         drop: function (event, ui) {
-            $(this).addClass('ui-state-highlight')
-            $('#draggable').addClass('ui-state-dropped')
-            // Load the sample data
-            $.get('../data/sample_journeys.csv', function(data) {
-                var output_json = processCSV(data);
-                saveJourneyJSON(output_json);
-                processSessionData();
-            });
+            if (!$(this).hasClass('ui-state-highlight')) {
+                $(this).addClass('ui-state-highlight');
+                $('#draggable').addClass('ui-state-dropped').draggable('disable');
+                // Load the sample data
+                $.get('../data/sample_journeys.csv', function(data) {
+                    var output_json = processCSV(data);
+                    saveJourneyJSON(output_json);
+                    processSessionData();
+                });
+                $(this).parent('.container').slideUp();
+            }
         }
         // revert: 'invalid'
+    });
+
+    $('#filter').on('keyup', function(event) {
+        //if esc is pressed or nothing is entered
+        if (event.keyCode === 27 || $(this).val() === '') {
+            //if esc is pressed we want to clear the value of search box
+            $(this).val('');
+
+            //we want each row to be visible because if nothing
+            //is entered then all rows are matched.
+            $('tbody tr').addClass('visible');
+        } else {
+            //if there is text, lets filter
+            filter('tbody tr', $(this).val());
+        }
+    });
+    $('label span').on('click', function() {
+        // Clear the filter input when the 'x' is clicked
+        $(this).siblings('input').val('');
+        $('tbody tr').addClass('visible');
+        set_alt_row('tbody tr');
+    });
+
+    $('th').on('click', function(){
+        // Add an event handler *after* the columns have been sorted
+        set_alt_row('tbody tr');
     });
 });

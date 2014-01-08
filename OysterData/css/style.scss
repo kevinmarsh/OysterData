@@ -1,5 +1,5 @@
 body {
-    padding: 1em;
+    padding: 16px;
 }
 
 #alertbox {
@@ -79,7 +79,11 @@ input[type="number"] {
 
     table#routes {
         tbody tr {
-            &:nth-child(odd) {
+            display: none;
+            &.visible {
+                display: table-row;
+            }
+            &.alt {
                 background-color: #FFFFFF;
             }
             &:hover {
@@ -89,3 +93,25 @@ input[type="number"] {
     }
 }
 
+label {
+    display: inline;
+    position: relative;
+
+    & span {
+        position: absolute;
+        top: -0.5em;
+        right: 0.5em;
+        background-color: #949494;
+        opacity: 0.5;
+        border-radius: 1em;
+        padding: 0.1em 0.6em;
+        -webkit-transition: opacity 0.3s linear;
+           -moz-transition: opacity 0.3s linear;
+             -o-transition: opacity 0.3s linear;
+                transition: opacity 0.3s linear;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
