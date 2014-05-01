@@ -34,7 +34,7 @@ $(function(){
     function readUpload(reqFile){
         if($(reqFile).val().split('.').pop().toLowerCase() !== 'csv') {
             // Trivially check that it is the correct file type
-            alert('Sorry only CSV files are accepted at this time.');
+            window.alert('Sorry only CSV files are accepted at this time.');
         }
         if(reqFile.files && reqFile.files[0]){
             var reader = new FileReader();
@@ -142,7 +142,7 @@ $(function(){
 
     function strip_station_name(stationname) {
         // Gets rid of the superfluous "[London Underground]" from the station name
-        return stationname.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>')
+        return stationname.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>');
     }
 
     function convert_stations_to_table(stationData, minJourneys){
@@ -257,7 +257,7 @@ $(function(){
                 $(this).addClass('ui-state-highlight');
                 $('#draggable').addClass('ui-state-dropped').draggable('disable');
                 // Load the sample data
-                $.get('../data/sample_journeys.csv', function(data) {
+                $.get('data/sample_journeys.csv', function(data) {
                     var output_json = processCSV(data);
                     saveJourneyJSON(output_json);
                     processSessionData();
@@ -266,4 +266,5 @@ $(function(){
             }
         }
     });
+
 });
