@@ -19,11 +19,22 @@ module.exports = function(grunt) {
             }
         },
 
+        imagemin: {
+            dynamic: {
+                files: [{
+                    expand: true,
+                    cwd: 'OysterData/images/',
+                    src: ['**/*.{png,jpg,gif}'],
+                    dest: 'OysterData/images/build/'
+                }]
+            }
+        },
+
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.registerTask('default', ['concat']);
-
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.registerTask('default', ['concat', 'uglify', 'imagemin']);
 };
