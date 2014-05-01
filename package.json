@@ -1,0 +1,19 @@
+{
+  "name": "OysterData",
+  "version": "0.2.0",
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  },
+  "description": "A simple project to visualize Oyster Cards data based on the CSV files sent out every month by Transport for London.",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@bitbucket.org/kevinmarsh/oysterdata.git"
+  },
+  "keywords": [
+    "tfl",
+    "oyster",
+    "javascript"
+  ],
+  "author": "Kevin Marsh",
+  "license": "MIT"
+}
