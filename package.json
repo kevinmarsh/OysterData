@@ -2,7 +2,8 @@
   "name": "OysterData",
   "version": "0.2.0",
   "devDependencies": {
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.4",
+    "grunt-contrib-concat": "^0.4.0"
   },
   "description": "A simple project to visualize Oyster Cards data based on the CSV files sent out every month by Transport for London.",
   "repository": {
@@ -15,5 +16,8 @@
     "javascript"
   ],
   "author": "Kevin Marsh",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "grunt-contrib-concat": "^0.4.0"
+  }
 }
