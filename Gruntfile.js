@@ -13,10 +13,13 @@ module.exports = function(grunt) {
         },
 
         uglify: {
+            options : {
+                preserveComments: 'some'
+            },
             build: {
                 src: 'OysterData/js/build/production.js',
                 dest: 'OysterData/js/build/production.min.js'
-            }
+            },
         },
 
         imagemin: {
