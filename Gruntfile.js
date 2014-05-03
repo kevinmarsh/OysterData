@@ -30,11 +30,22 @@ module.exports = function(grunt) {
             }
         },
 
+        sass: {
+            dist: {
+                options: {
+                    style: 'compressed'
+                },
+                files: {
+                    'OysterData/css/build/global.min.css': 'OysterData/css/style.scss'
+                }
+            }
+        },
 
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.registerTask('default', ['concat', 'uglify', 'imagemin']);
+    grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.registerTask('default', ['concat', 'uglify', 'imagemin', 'sass']);
 };
