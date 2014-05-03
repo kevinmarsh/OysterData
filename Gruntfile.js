@@ -3,13 +3,22 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concat: {
-            dist: {
+            js: {
                 src: [
                     'OysterData/js/libs/*.js',
                     'OysterData/js/main.js'
                 ],
                 dest: 'OysterData/js/build/production.js',
-            }
+            },
+            css: {
+                src: [
+                    'OysterData/css/bootstrap.min.css',
+                    'OysterData/css/bootstrap-responsive.min.css',
+                    'OysterData/css/sortable-theme-light.css',
+                    'OysterData/css/style.css',
+                ],
+                dest: 'OysterData/css/build/global.css',
+            },
         },
 
         uglify: {
@@ -39,7 +48,7 @@ module.exports = function(grunt) {
                     style: 'compressed'
                 },
                 files: {
-                    'OysterData/css/build/global.min.css': 'OysterData/css/style.scss'
+                    'OysterData/css/style.css': 'OysterData/css/style.scss'
                 }
             }
         },
@@ -50,5 +59,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-sass');
-    grunt.registerTask('default', ['concat', 'uglify', 'imagemin', 'sass']);
+    grunt.registerTask('default', ['sass', 'concat', 'uglify', 'imagemin']);
 };
