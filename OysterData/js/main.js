@@ -257,7 +257,7 @@ $(function(){
                 $(this).addClass('ui-state-highlight');
                 $('#draggable').addClass('ui-state-dropped').draggable('disable');
                 // Load the sample data
-                $.get('data/sample_journeys.csv', function(data) {
+                $.get('data/sample_tfl_data.csv', function(data) {
                     var output_json = processCSV(data);
                     saveJourneyJSON(output_json);
                     processSessionData();
