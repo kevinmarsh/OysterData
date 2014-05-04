@@ -31,6 +31,14 @@ module.exports = function(grunt) {
             },
         },
 
+        jshint: {
+            options: {
+                '-W069': true, // This ignores any warning with a special option syntax (TODO: remove once main.js is refactored)
+                reporter: require('jshint-stylish')
+            },
+            target: ['OysterData/js/main.js']
+        },
+
         imagemin: {
             dynamic: {
                 files: [{
@@ -56,7 +64,7 @@ module.exports = function(grunt) {
         watch: {
             scripts: {
                 files: ['OysterData/js/*.js'],
-                tasks: ['concat:js', 'uglify'],
+                tasks: ['jshint', 'concat:js', 'uglify'],
                 options: {
                     spawn: false,
                 },
@@ -73,5 +81,5 @@ module.exports = function(grunt) {
     });
 
     require('load-grunt-tasks')(grunt);
-    grunt.registerTask('default', ['sass', 'concat', 'uglify', 'imagemin']);
+    grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify', 'imagemin']);
 };
