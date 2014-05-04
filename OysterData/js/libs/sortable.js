@@ -1,3 +1,4 @@
+//@license
 // sortable.js 0.5.1
 // https://github.com/HubSpot/sortable
 (function() {

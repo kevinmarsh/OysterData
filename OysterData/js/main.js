@@ -1,5 +1,5 @@
 /*******************************************************************************
-*
+*@license
 * Oyster Data by Kevin Marsh 2014
 *
 * Upload the csv file via an upload button
