@@ -31,19 +31,21 @@ $(function(){
 * Functions
 *******************************************************************************/
 
-    function readUpload(reqFile){
-        if($(reqFile).val().split('.').pop().toLowerCase() !== 'csv') {
+    function readUpload(uploadedFiles) {
+        if ($(uploadedFiles).val().split('.').pop().toLowerCase() !== 'csv') {
             // Trivially check that it is the correct file type
             window.alert('Sorry only CSV files are accepted at this time.');
         }
-        if(reqFile.files && reqFile.files[0]){
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var output_json = processCSV(e.target.result);
-                saveJourneyJSON(output_json);
-                processSessionData();
-            };  // End onload()
-            reader.readAsText(reqFile.files[0]);
+        if (uploadedFiles.files) {
+            $.each(uploadedFiles.files, function (i,file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var output_json = processCSV(e.target.result);
+                    saveJourneyJSON(output_json);
+                };  // End onload()
+                reader.readAsText(file);
+            });
+            processSessionData();
         }  // End if html5 filelist support
     }
 
