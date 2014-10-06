@@ -54,8 +54,10 @@ $(function(){
         var rows = [];
         $.each(csvData.split('\n'), function(index, row) {
             var currentRow = {};
-            if (index <= 1) {
-                headerRow = row.split(',');
+            if (headerRow === undefined) {
+                if (row.indexOf('Date,') === 0) {
+                    headerRow = row.split(',');
+                }
             } else {
                 $.each(row.split(','), function(i, v) {
                     currentRow[headerRow[i]] = v;
@@ -116,27 +118,40 @@ $(function(){
         // Take the array of individual journeys and convert them to routes with aggregated data
         var routes = {};  // Station name, number of journeys, average cost, average time
         $.each(journeys, function(i, row) {
-            if (parseFloat(row['Charge'])) {
-                // Skip any ones that are bus journeys or top ups
-                var stationname = row['Journey/Action'];
-                if (!(stationname in routes)) {
-                    // Add the station name to the routes
-                    routes[stationname] = {
-                        'count': 0,
-                        'time': 0,
-                        'price': 0
-                    };
-                }
+            var timeDiff;
+            var stationname = row['Journey/Action'];
+            if (!stationname || stationname.indexOf('"Topped up') === 0 || stationname.indexOf('"Season ticket bought') === 0)
+            {
+                return;
+            }
+            stationname = stationname.replace(/\"/g, '');
+            if (!(stationname in routes)) {
+                // Add the station name to the routes
+                routes[stationname] = {
+                    'n_uncharged': 0,
+                    'n_charged': 0,
+                    'charged': 0,
+                    'time': 0
+                };
+            }
+            if (row['End Time']) {
                 var endTime = new Date(row['Date'] + " " + row['End Time']);
                 var startTime = new Date(row['Date'] + " " + row['Start Time']);
                 if (startTime > endTime) {
                     // Then the trip began before midnight and ended after
                     endTime = new Date(endTime.valueOf() + 86400000);
                 }
-                var timeDiff = endTime - startTime;
-                routes[stationname]['count'] += 1;
-                routes[stationname]['time'] += timeDiff;
-                routes[stationname]['price'] += parseFloat(row['Charge']);
+                timeDiff = endTime - startTime;
+            } else {
+                timeDiff = 0;
+            }
+            routes[stationname]['time'] += timeDiff;
+            if (parseFloat(row['Charge'])) {
+                routes[stationname]['n_charged'] += 1;
+                routes[stationname]['charged'] += parseFloat(row['Charge']);
+            }
+            else {
+                routes[stationname]['n_uncharged'] += 1;
             }
         });
         return routes;
@@ -147,18 +162,26 @@ $(function(){
         return stationname.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>');
     }
 
+    function monetary_format(value) {
+        if (value === '' || value === undefined) {
+            return '';
+        }
+        return '£' + value.toFixed(2);
+    }
+
     function convert_stations_to_table(stationData, minJourneys){
         var $stationList = $('#routes');
         $('#routes tbody').empty();
         // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $.each(stationData, function(station, data) {
-            if (!minJourneys || data['count'] >= minJourneys) {
+            var n_total = data['n_charged'] + data['n_uncharged'];
+            if (!minJourneys || n_total >= minJourneys) {
                 var stationRow = $('<tr/>').addClass('visible').appendTo($stationList);
-                var avg_time = (data['time'] / 1000 / 60 / data['count']).toFixed(2);
-                var total_time = (data['time'] / 1000 / 60).toFixed(2);
-                var avg_cost = '£' + (data['price'] / data['count']).toFixed(2);
-                var total_cost = '£' + (data['price']).toFixed(2);
-                $.each([strip_station_name(station), data['count'], avg_time, total_time, avg_cost, total_cost], function(index, value) {
+                var avg_time = (data['time'] / 1000 / 60 / n_total);
+                var total_time = (avg_time * n_total);
+                var avg_cost = data['charged'] > 0 ? (data['charged'] / data['n_charged']) : 0;
+                var total_cost = data['charged'];
+                $.each([strip_station_name(station), n_total, avg_time.toFixed(2), total_time.toFixed(2), monetary_format(avg_cost), monetary_format(total_cost)], function(index, value) {
                     $('<td/>').html(value).attr('data-value', value.toString().replace('£', '')).appendTo(stationRow);
                 });
             }
@@ -235,7 +258,7 @@ $(function(){
 * Initialize
 *******************************************************************************/
 
-    if (!!sessionStorage.getItem('journeys')) {
+    if (sessionStorage.getItem('journeys')) {
         // Load the session storage if there are journeys saved
         processSessionData();
     } else {
