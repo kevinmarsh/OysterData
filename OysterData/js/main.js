@@ -24,8 +24,8 @@
 *
 *******************************************************************************/
 
-$(function(){
-    "use strict";
+$(function () {
+    'use strict';
 
 /*******************************************************************************
 * Functions
@@ -37,11 +37,11 @@ $(function(){
             window.alert('Sorry only CSV files are accepted at this time.');
         }
         if (uploadedFiles.files) {
-            $.each(uploadedFiles.files, function (i,file) {
+            $.each(uploadedFiles.files, function (i, file) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    var output_json = processCSV(e.target.result);
-                    saveJourneyJSON(output_json);
+                reader.onload = function (e) {
+                    var outputJson = processCSV(e.target.result);
+                    saveJourneyJson(outputJson);
                 };  // End onload()
                 reader.readAsText(file);
             });
@@ -52,14 +52,14 @@ $(function(){
     function processCSV(csvData) {
         var headerRow;
         var rows = [];
-        $.each(csvData.split('\n'), function(index, row) {
+        $.each(csvData.split('\n'), function (index, row) {
             var currentRow = {};
             if (headerRow === undefined) {
                 if (row.indexOf('Date,') === 0) {
-                    headerRow = row.split(',');
+                    headerRow = row.toLowerCase().replace(/[^a-z0-9,]/g, '_').split(',');
                 }
             } else {
-                $.each(row.split(','), function(i, v) {
+                $.each(row.split(','), function (i, v) {
                     currentRow[headerRow[i]] = v;
                 });
                 rows.push(currentRow);
@@ -68,7 +68,7 @@ $(function(){
         return [headerRow, rows];
     }
 
-    function saveJourneyJSON (data) {
+    function saveJourneyJson(data) {
         // Save the JSON data in session storage
         var headers = data[0];
         var journeys = data[1];
@@ -81,7 +81,7 @@ $(function(){
             journeys = journeys.concat(JSON.parse(previousJourneys));
         }
         if (typeof journeys !== 'string') {
-            journeys = JSON.stringify(unique_array(journeys));
+            journeys = JSON.stringify(uniqueArray(journeys));
         }
         sessionStorage.setItem('journeys', journeys);
     }
@@ -92,51 +92,50 @@ $(function(){
             return false;
         }
         journeys = JSON.parse(journeys);
-        var routes = convert_journeys_to_routes(journeys);
+        var routes = convertJourneysToRoutes(journeys);
         var minJourneys = $('input[name="minjourneys"]').val();
-        convert_stations_to_table(routes, minJourneys);
+        convertStationsToTable(routes, minJourneys);
         $('#routes').attr('data-sortable', 'data-sortable').removeAttr('data-sortable-initialized');
         Sortable.init();
         $('.processeddata').show();
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
-        set_alt_row('tbody tr');
+        setAltRow('tbody tr');
     }
 
-    function unique_array(array) {
+    function uniqueArray(array) {
         // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
         var a = array.concat();
-        for(var i=0; i<a.length; ++i) {
-            for(var j=i+1; j<a.length; ++j) {
-                if(a[i] === a[j])
+        for (var i = 0; i < a.length; i++) {
+            for (var j = i + 1; j < a.length; j++) {
+                if (a[i] === a[j])
                     a.splice(j--, 1);
             }
         }
         return a;
     }
 
-    function convert_journeys_to_routes (journeys) {
+    function convertJourneysToRoutes(journeys) {
         // Take the array of individual journeys and convert them to routes with aggregated data
         var routes = {};  // Station name, number of journeys, average cost, average time
-        $.each(journeys, function(i, row) {
+        $.each(journeys, function (i, row) {
             var timeDiff;
-            var stationname = row['Journey/Action'];
-            if (!stationname || stationname.indexOf('"Topped up') === 0 || stationname.indexOf('"Season ticket bought') === 0)
-            {
+            var stationName = row.journey_action;
+            if (!stationName || stationName.indexOf('"Topped up') === 0 || stationName.indexOf('"Season ticket bought') === 0) {
                 return;
             }
-            stationname = stationname.replace(/\"/g, '');
-            if (!(stationname in routes)) {
+            stationName = stationName.replace(/\"/g, '');
+            if (!(stationName in routes)) {
                 // Add the station name to the routes
-                routes[stationname] = {
-                    'n_uncharged': 0,
-                    'n_charged': 0,
+                routes[stationName] = {
+                    'unchargedCount': 0,
+                    'chargedCount': 0,
                     'charged': 0,
                     'time': 0
                 };
             }
-            if (row['End Time']) {
-                var endTime = new Date(row['Date'] + " " + row['End Time']);
-                var startTime = new Date(row['Date'] + " " + row['Start Time']);
+            if (row.endTime) {
+                var endTime = new Date(row.date + ' ' + row.endTime);
+                var startTime = new Date(row.date + ' ' + row.startTime);
                 if (startTime > endTime) {
                     // Then the trip began before midnight and ended after
                     endTime = new Date(endTime.valueOf() + 86400000);
@@ -145,43 +144,42 @@ $(function(){
             } else {
                 timeDiff = 0;
             }
-            routes[stationname]['time'] += timeDiff;
-            if (parseFloat(row['Charge'])) {
-                routes[stationname]['n_charged'] += 1;
-                routes[stationname]['charged'] += parseFloat(row['Charge']);
-            }
-            else {
-                routes[stationname]['n_uncharged'] += 1;
+            routes[stationName].time += timeDiff;
+            if (parseFloat(row.charge)) {
+                routes[stationName].chargedCount += 1;
+                routes[stationName].charged += parseFloat(row.charge);
+            } else {
+                routes[stationName].unchargedCount += 1;
             }
         });
         return routes;
     }
 
-    function strip_station_name(stationname) {
-        // Gets rid of the superfluous "[London Underground]" from the station name
-        return stationname.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>');
+    function cleanStationName(stationName) {
+        // Gets rid of the superfluous '[London Underground]' from the station name
+        return stationName.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>');
     }
 
-    function monetary_format(value) {
+    function monetaryFormat(value) {
         if (value === '' || value === undefined) {
             return '';
         }
         return '£' + value.toFixed(2);
     }
 
-    function convert_stations_to_table(stationData, minJourneys){
+    function convertStationsToTable(stationData, minJourneys) {
         var $stationList = $('#routes');
         $('#routes tbody').empty();
         // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
-        $.each(stationData, function(station, data) {
-            var n_total = data['n_charged'] + data['n_uncharged'];
-            if (!minJourneys || n_total >= minJourneys) {
+        $.each(stationData, function (station, data) {
+            var journeysCount = data.chargedCount + data.unchargedCount;
+            if (!minJourneys || journeysCount >= minJourneys) {
                 var stationRow = $('<tr/>').addClass('visible').appendTo($stationList);
-                var avg_time = (data['time'] / 1000 / 60 / n_total);
-                var total_time = (avg_time * n_total);
-                var avg_cost = data['charged'] > 0 ? (data['charged'] / data['n_charged']) : 0;
-                var total_cost = data['charged'];
-                $.each([strip_station_name(station), n_total, avg_time.toFixed(2), total_time.toFixed(2), monetary_format(avg_cost), monetary_format(total_cost)], function(index, value) {
+                var avgTime = (data.time / 1000 / 60 / journeysCount);
+                var totalTime = (avgTime * journeysCount);
+                var avgCost = data.charged > 0 ? (data.charged / data.chargedCount) : 0;
+                var totalCost = data.charged;
+                $.each([cleanStationName(station), journeysCount, avgTime.toFixed(2), totalTime.toFixed(2), monetaryFormat(avgCost), monetaryFormat(totalCost)], function (index, value) {
                     $('<td/>').html(value).attr('data-value', value.toString().replace('£', '')).appendTo(stationRow);
                 });
             }
@@ -193,17 +191,17 @@ $(function(){
         query = $.trim(query); //trim white space
         query = query.replace(/ /gi, '|'); //add OR for regex query
 
-        $(selector).each(function() {
-            if ($(this).text().search(new RegExp(query, "i")) < 0) {
+        $(selector).each(function () {
+            if ($(this).text().search(new RegExp(query, 'i')) < 0) {
                 $(this).removeClass('visible');
             } else {
-               $(this).addClass('visible');
+                $(this).addClass('visible');
             }
         });
-        set_alt_row(selector);
+        setAltRow(selector);
     }
 
-    function set_alt_row(selector) {
+    function setAltRow(selector) {
         $('.alt').removeClass('alt');
         $(selector + ':visible:even').addClass('alt');
     }
@@ -212,7 +210,7 @@ $(function(){
 * Event Handlers
 *******************************************************************************/
 
-    $('.uploadcsv').on('click', function() {
+    $('.uploadcsv').on('click', function () {
         $(this).children('input')[0].click();
     });
 
@@ -222,16 +220,16 @@ $(function(){
 
     $('button.processsessiondata').on('click', processSessionData);
 
-    $('button.clearsessiondata').on('click', function() {
+    $('button.clearsessiondata').on('click', function () {
         sessionStorage.clear();
         $(this).prop('disabled', 'disabled');
         $('.processsessiondata').prop('disabled', 'disabled');
         $('.processeddata').hide();
-        $("#routes").removeAttr('data-sortable');
+        $('#routes').removeAttr('data-sortable');
         Sortable.init();
     });
 
-    $('#filter').on('keyup', function(event) {
+    $('#filter').on('keyup', function (event) {
         if (event.keyCode === 27 || $(this).val() === '') {
             // If esc is pressed we want to clear the value of search box
             // and show all rows
@@ -242,16 +240,16 @@ $(function(){
         }
     });
 
-    $('label span').on('click', function() {
+    $('label span').on('click', function () {
         // Clear the filter input when the 'x' is clicked
         $(this).siblings('input').val('');
         $('tbody tr').addClass('visible');
-        set_alt_row('tbody tr');
+        setAltRow('tbody tr');
     });
 
-    $('th').on('click', function(){
+    $('th').on('click', function () {
         // Add an event handler *after* the columns have been sorted
-        set_alt_row('tbody tr');
+        setAltRow('tbody tr');
     });
 
 /*******************************************************************************
@@ -277,14 +275,14 @@ $(function(){
     $('#droppable').droppable({
         hoverClass: 'ui-state-active',
         activeClass: 'ui-state-hover',
-        drop: function (event, ui) {
+        drop: function () {
             if (!$(this).hasClass('ui-state-highlight')) {
                 $(this).addClass('ui-state-highlight');
                 $('#draggable').addClass('ui-state-dropped').draggable('disable');
                 // Load the sample data
-                $.get('data/sample_tfl_data.csv', function(data) {
-                    var output_json = processCSV(data);
-                    saveJourneyJSON(output_json);
+                $.get('data/sample_tfl_data.csv', function (data) {
+                    var outputJson = processCSV(data);
+                    saveJourneyJson(outputJson);
                     processSessionData();
                 });
                 $(this).parent('.container').slideUp();
