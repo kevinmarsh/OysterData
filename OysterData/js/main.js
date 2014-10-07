@@ -56,7 +56,7 @@ $(function () {
             var currentRow = {};
             if (headerRow === undefined) {
                 if (row.indexOf('Date,') === 0) {
-                    headerRow = row.toLowerCase().replace(/[^a-z0-9,]/g, '_').split(',');
+                    headerRow = row.toLowerCase().replace(/[^a-z0-9,]/g, '_').replace(/_[a-z]/g, function (x) { return x.slice(1).toUpperCase (); }).split(',');
                 }
             } else {
                 $.each(row.split(','), function (i, v) {
@@ -119,7 +119,7 @@ $(function () {
         var routes = {};  // Station name, number of journeys, average cost, average time
         $.each(journeys, function (i, row) {
             var timeDiff;
-            var stationName = row.journey_action;
+            var stationName = row.journeyAction;
             if (!stationName || stationName.indexOf('"Topped up') === 0 || stationName.indexOf('"Season ticket bought') === 0) {
                 return;
             }
