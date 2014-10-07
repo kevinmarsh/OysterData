@@ -156,8 +156,9 @@ $(function () {
     }
 
     function cleanStationName(stationName) {
-        // Gets rid of the superfluous '[London Underground]' from the station name
-        return stationName.replace(/ \[(\w*\s*\w*)\]/g, '<span title="$1">*</span>');
+        // Replaces the superfluous '[London Underground]' or '[London Underground / National Rail]'
+        // from the station name and adds it back as a span with that as the title
+        return stationName.replace(/ \[([\w\s\/]*)\]/g, '<span title="$1">*</span>');
     }
 
     function monetaryFormat(value) {
