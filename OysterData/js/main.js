@@ -36,17 +36,15 @@ $(function () {
             // Trivially check that it is the correct file type
             window.alert('Sorry only CSV files are accepted at this time.');
         }
-        if (uploadedFiles.files) {
-            $.each(uploadedFiles.files, function (i, file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var outputJson = processCSV(e.target.result);
-                    saveJourneyJson(outputJson);
-                };  // End onload()
-                reader.readAsText(file);
-            });
-            processSessionData();
-        }  // End if html5 filelist support
+        $.each(uploadedFiles.files, function (i, file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var journeys = processCSV(e.target.result);
+                saveJourneyJson(journeys);
+                debouncedProcessSessionData();
+            };
+            reader.readAsText(file);
+        });
     }
 
     function processCSV(csvData) {
@@ -65,18 +63,12 @@ $(function () {
                 rows.push(currentRow);
             }
         });
-        return [headerRow, rows];
+        return rows;
     }
 
-    function saveJourneyJson(data) {
-        // Save the JSON data in session storage
-        var headers = data[0];
-        var journeys = data[1];
+    function saveJourneyJson(journeys) {
+        // Save the journey JSON data in session storage
         var previousJourneys = sessionStorage.getItem('journeys');
-        if (!sessionStorage.getItem('journeys') && typeof headers !== 'string') {
-            headers = JSON.stringify(headers);
-        }
-        sessionStorage.setItem('headers', headers);
         if (typeof previousJourneys === 'string') {
             journeys = journeys.concat(JSON.parse(previousJourneys));
         }
@@ -101,6 +93,8 @@ $(function () {
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
         setAltRow('tbody tr');
     }
+
+    var debouncedProcessSessionData = $.debounce(200, processSessionData);
 
     function uniqueArray(array) {
         // Removes duplicates from an array (http://stackoverflow.com/a/1584377/2619847)
