@@ -1,0 +1,6 @@
+_data/*
+node_modules/*
+OysterData/js/build/*
+OysterData/css/build/*
+OysterData/images/build/*
+OysterData/css/style.css
