@@ -183,21 +183,16 @@ $(function () {
 
     function filter(selector, query) {
         // http://net.tutsplus.com/tutorials/javascript-ajax/using-jquery-to-manipulate-and-filter-data/
-        query = $.trim(query); //trim white space
-        query = query.replace(/ /gi, '|'); //add OR for regex query
-
+        query = $.trim(query).replace(/ /gi, '|'); //trim white space and add OR for regex query
+        var regex = new RegExp(query, 'i');
         $(selector).each(function () {
-            if ($(this).text().search(new RegExp(query, 'i')) < 0) {
-                $(this).removeClass('visible');
-            } else {
-                $(this).addClass('visible');
-            }
+            $(this).toggleClass('visible', $(this).text().search(regex) !== -1);
         });
         setAltRow(selector);
     }
 
     function setAltRow(selector) {
-        $('.alt').removeClass('alt');
+        $(selector).find('.alt').removeClass('alt');
         $(selector + ':visible:even').addClass('alt');
     }
 
