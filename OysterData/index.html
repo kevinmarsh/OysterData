@@ -27,17 +27,16 @@
         </div>
 
         <div class="container">
-            <form class="span8 ui-droppable uploadcsv" id="droppable">
+            <form class="span8" id="uploadcsv">
                 <p>Drag &amp; drop or <a href="#">click to upload</a> your journey statment here.</p>
                 <p class="subline">Only <span>.csv</span> files accepted</p>
 
                 <!-- Keep this field hidden -->
-                <input type="file" name="imagefile" multiple="multiple" accept=".csv" size="0" style="display:none;" />
+                <input type="file" name="journeyfiles" multiple="multiple" accept=".csv" />
             </form>
 
             <div class="span3 ui-widget-content">
-                <p>Drag this file over if you don't have a Journey Statement handy &hellip;</p>
-                <img id="draggable" src="images/csv.svg" alt=".csv file icon" />
+                <button class="btn btn-info btn-small" id="sampledata">Or load a sample journey statement <i class="icon-file icon-white"></i></button>
             </div>
         </div>
 

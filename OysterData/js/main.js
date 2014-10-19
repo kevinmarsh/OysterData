@@ -31,12 +31,13 @@ $(function () {
 * Functions
 *******************************************************************************/
 
-    function readUpload(uploadedFiles) {
-        if ($(uploadedFiles).val().split('.').pop().toLowerCase() !== 'csv') {
-            // Trivially check that it is the correct file type
-            window.alert('Sorry only CSV files are accepted at this time.');
-        }
-        $.each(uploadedFiles.files, function (i, file) {
+    function readUpload(files) {
+        $.each(files, function (i, file) {
+            if (file.type !== 'text/csv') {
+                // Trivially check that it is the correct file type
+                window.alert('Sorry only CSV files are accepted at this time.');
+                return false;
+            }
             var reader = new FileReader();
             reader.onload = function (e) {
                 var journeys = processCSV(e.target.result);
@@ -196,6 +197,17 @@ $(function () {
         $(selector + ':visible:even').addClass('alt');
     }
 
+    function fileDragHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        $(event.target).toggleClass('readytodrop', event.type === 'dragenter');
+    }
+
+    function fileDropHandler(event) {
+        var files = event.target.files || event.originalEvent.dataTransfer.files;
+        readUpload(files);
+    }
+
 /*******************************************************************************
 * Event Handlers
 *******************************************************************************/
@@ -204,8 +216,8 @@ $(function () {
         $(this).children('input')[0].click();
     });
 
-    $('input[type="file"]').change(function () {
-        readUpload(this);
+    $('input[type="file"]').on('change', function () {
+        readUpload(this.files);
     });
 
     $('button.processsessiondata').on('click', processSessionData);
@@ -217,6 +229,17 @@ $(function () {
         $('.processeddata').hide();
         $('#routes').removeAttr('data-sortable');
         Sortable.init();
+    });
+
+    $('#sampledata').on('click', function () {
+        // Load the sample data
+        $.get('data/sample_tfl_data.csv', function (data) {
+            var outputJson = processCSV(data);
+            saveJourneyJson(outputJson);
+            processSessionData();
+        }).done(function () {
+            // TODO: scroll to the results, disable this button
+        });
     });
 
     $('#filter').on('keyup', function (event) {
@@ -258,26 +281,19 @@ $(function () {
         $('<div class="alert alert-warning">Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.</div>').insertAfter('.container.page-header');
     }
 
-    $('#draggable').draggable({
-        revert: 'invalid'
-    });
+    if (window.File && window.FileList && window.FileReader) {
+        // from sitepoint.com/html5-file-drag-and-drop/
+        var xhr = new XMLHttpRequest();
+        if (xhr.upload) {
+            var $form = $("form").show();
+            $form.on('dragover', function (event) {event.preventDefault();});
+            $form.on('dragenter dragleave drop', fileDragHandler);
+            $form.on('drop', fileDropHandler);
 
-    $('#droppable').droppable({
-        hoverClass: 'ui-state-active',
-        activeClass: 'ui-state-hover',
-        drop: function () {
-            if (!$(this).hasClass('ui-state-highlight')) {
-                $(this).addClass('ui-state-highlight');
-                $('#draggable').addClass('ui-state-dropped').draggable('disable');
-                // Load the sample data
-                $.get('data/sample_tfl_data.csv', function (data) {
-                    var outputJson = processCSV(data);
-                    saveJourneyJson(outputJson);
-                    processSessionData();
-                });
-                $(this).parent('.container').slideUp();
-            }
+            $('input[name="journeyfiles"]').hide ();
         }
-    });
+    } else {
+        // TODO: hide the 'drag file' bit and just say click to upload
+    }
 
 });
