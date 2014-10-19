@@ -260,7 +260,7 @@ $(function () {
 
     if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
         // Show the browser warning
-        $('#alertbox').slideDown().text('Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.');
+        $('<div class="alert alert-warning">Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.</div>').insertAfter('.container.page-header');
     }
 
     $('#draggable').draggable({
