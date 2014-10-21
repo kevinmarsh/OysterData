@@ -212,7 +212,7 @@ $(function () {
 * Event Handlers
 *******************************************************************************/
 
-    $('.uploadcsv').on('click', function () {
+    $('#uploadcsv').on('click', function () {
         $(this).children('input')[0].click();
     });
 
