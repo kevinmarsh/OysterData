@@ -184,10 +184,11 @@ $(function () {
 
     function filter(selector, query) {
         // http://net.tutsplus.com/tutorials/javascript-ajax/using-jquery-to-manipulate-and-filter-data/
-        query = $.trim(query).replace(/ /gi, '|'); //trim white space and add OR for regex query
+        query = $.trim(query).replace(/ /gi, '|'); // trim white space and add OR for regex query
+        query = query.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // escape special chars
         var regex = new RegExp(query, 'i');
         $(selector).each(function () {
-            $(this).toggleClass('visible', $(this).text().search(regex) !== -1);
+            $(this).toggleClass('visible', $(this).find('td:first').text().search(regex) !== -1);
         });
         setAltRow(selector);
     }
