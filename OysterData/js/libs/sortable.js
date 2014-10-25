@@ -1,5 +1,5 @@
 //@license
-// sortable.js 0.5.1
+// sortable.js 0.6.0
 // https://github.com/HubSpot/sortable
 (function() {
   var SELECTOR, addEventListener, clickEvent, numberRegExp, sortable, touchDevice, trimRegExp;
@@ -109,8 +109,13 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         row = _ref[_i];
         text = sortable.getNodeValue(row.cells[i]);
-        if (text !== '' && text.match(numberRegExp)) {
-          return sortable.types.numeric;
+        if (text !== '') {
+          if (text.match(numberRegExp)) {
+            return sortable.types.numeric;
+          }
+          if (!isNaN(Date.parse(text))) {
+            return sortable.types.date;
+          }
         }
       }
       return sortable.types.alpha;
@@ -132,8 +137,8 @@
         defaultSortDirection: 'descending',
         compare: function(a, b) {
           var aa, bb;
-          aa = parseFloat(a[0].replace(/[^0-9.-]/g, ''));
-          bb = parseFloat(b[0].replace(/[^0-9.-]/g, ''));
+          aa = parseFloat(a[0].replace(/[^0-9.-]/g, ''), 10);
+          bb = parseFloat(b[0].replace(/[^0-9.-]/g, ''), 10);
           if (isNaN(aa)) {
             aa = 0;
           }
@@ -146,16 +151,22 @@
       alpha: {
         defaultSortDirection: 'ascending',
         compare: function(a, b) {
+          return a[0].localeCompare(b[0]);
+        }
+      },
+      date: {
+        defaultSortDirection: 'ascending',
+        compare: function(a, b) {
           var aa, bb;
-          aa = a[0].toLowerCase();
-          bb = b[0].toLowerCase();
-          if (aa === bb) {
-            return 0;
+          aa = Date.parse(a[0]);
+          bb = Date.parse(b[0]);
+          if (isNaN(aa)) {
+            aa = 0;
           }
-          if (aa < bb) {
-            return -1;
+          if (isNaN(bb)) {
+            bb = 0;
           }
-          return 1;
+          return aa - bb;
         }
       }
     }
