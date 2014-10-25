@@ -26,37 +26,31 @@
             <h1>TfL Oyster Data <small>Aggregate your tube and bus journeys in London</small></h1>
         </div>
 
-        <div class="container">
-            <form class="span8" id="uploadcsv">
+        <div class="container loaddata">
+            <form id="uploadcsv">
                 <p>Drag &amp; drop or <a href="#">click to upload</a> your journey statment here.</p>
                 <p class="subline">Only <span>.csv</span> files accepted</p>
 
                 <!-- Keep this field hidden -->
                 <input type="file" name="journeyfiles" multiple="multiple" accept=".csv" />
             </form>
-
-            <div class="span3 ui-widget-content">
-                <button class="btn btn-info btn-small" id="sampledata">Or load a sample journey statement <i class="icon-file icon-white"></i></button>
-            </div>
+            <button class="btn btn-info btn-small" id="sampledata">Or load a sample journey statement <i class="icon-file icon-white"></i></button>
         </div>
 
-        <p>
-            <button class="processsessiondata btn btn-primary">Process Session Data</button>
-        </p>
-        <p>
-            <button class="clearsessiondata btn btn-warning">Clear Session Data</button>
-        </p>
-        <p>
-            <label>
-                Filter: <input type="text" name="filter" value="" id="filter" />
-                <span>x</span>
-            </label>
-        </p>
-
-        <hr>
-
-        <div class="processeddata">
-            <h1>Osyter Data</h1>
+        <div class="container results">
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <label>
+                        Filter: <input type="text" name="filter" value="" id="filter" placeholder="Add a station name or term ..." />
+                        <span>x</span>
+                    </label>
+                </div>
+                <div class="btn-group">
+                    <button class="btn clearsessiondata">Clear Session Data <i class="icon-trash"></i></button>
+                    <button class="btn showloaddata">Load more CSVs <i class="icon-file"></i></button>
+                </div>
+            </div>
+            <h1>Journeys</h1>
             <table id="routes" class="sortable-theme-light" data-sortable>
                 <thead>
                     <tr>

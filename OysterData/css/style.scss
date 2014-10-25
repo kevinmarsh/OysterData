@@ -1,8 +1,3 @@
-@mixin font-size($sizeValue: 1.6) {
-    font-size: ($sizeValue * 10) + px;
-    font-size: $sizeValue + rem;
-}
-
 /* Overide the bootstrap settings since we are using a different dir structure */
 [class^="icon-"], [class*=" icon-"] {
     background-image: url("../../images/glyphicons-halflings.png");
@@ -20,8 +15,15 @@ body {
     display: none;
 }
 
-form {
+.loaddata, .results {
+    display: none;
+}
+
+#uploadcsv {
+    width: 65%;
+    display: inline-block;
     padding: 2em 0;
+    margin: 0;
     border: 5px dashed rgba(82, 82, 82, 0.5);
     -webkit-border-radius: 5px;
        -moz-border-radius: 5px;
@@ -48,26 +50,22 @@ form {
     }
 }
 
-input[type="number"] {
-    margin: 0;
-    width: 2em;
+#sampledata {
+    vertical-align: text-bottom;
+    max-width: 33%
 }
 
-.processeddata {
-    display: none;
-
-    table#routes {
-        tbody tr {
-            display: none;
-            &.visible {
-                display: table-row;
-            }
-            &.alt {
-                background-color: #FFFFFF;
-            }
-            &:hover {
-                background-color: #FCF8E3;
-            }
+#routes {
+    tbody tr {
+        display: none;
+        &.visible {
+            display: table-row;
+        }
+        &.alt {
+            background-color: #FFFFFF;
+        }
+        &:hover {
+            background-color: #FCF8E3;
         }
     }
 }
@@ -76,9 +74,14 @@ label {
     display: inline;
     position: relative;
 
-    & span {
+    input[type="text"] {
+        margin-bottom: 0;
+        min-width: 220px;
+    }
+
+    span {
         position: absolute;
-        top: -0.5em;
+        top: 0;
         right: 0.5em;
         background-color: #949494;
         opacity: 0.5;
@@ -93,8 +96,4 @@ label {
             opacity: 1;
         }
     }
-}
-
-img {
-    height: 5em;
 }

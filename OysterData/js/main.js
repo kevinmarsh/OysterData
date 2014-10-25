@@ -87,13 +87,18 @@ $(function () {
         journeys = JSON.parse(journeys);
         var routes = convertJourneysToRoutes(journeys);
         convertStationsToTable(routes);
-        $('.processeddata').show();
-        $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
         var $sorted = $('[data-sorted="true"]');
         if ($sorted.length) {
             // This is a terrible little hack to get Sortable to properly handle data being dynamically added
             ($sorted.next().length ? $sorted.next() : $sorted.prev()).trigger('click');
             $sorted.attr('data-sorted-direction', ($sorted.attr('data-sorted-direction') === 'ascending' ? 'descending' : 'ascending')).trigger('click');
+        }
+        if ($('.results').is(':hidden') || $('.loaddata').is(':visible')) {
+            $('.loaddata').slideUp(function () {
+                $('#sampledata').hide();
+                $('#uploadcsv').css('width', '100%');
+                $('.results').slideDown();
+            });
         }
     }
 
@@ -225,9 +230,10 @@ $(function () {
 
     $('button.clearsessiondata').on('click', function () {
         sessionStorage.clear();
-        $(this).prop('disabled', 'disabled');
-        $('.processsessiondata').prop('disabled', 'disabled');
-        $('.processeddata').hide();
+        $('#uploadcsv').css('width', '65%');
+        $('#sampledata').show();
+        $('.loaddata').slideDown();
+        $('.results').slideUp();
     });
 
     $('#sampledata').on('click', function () {
@@ -264,6 +270,10 @@ $(function () {
         setAltRow('tbody tr');
     });
 
+    $('.showloaddata').on('click', function () {
+        $('.loaddata').slideDown();
+    });
+
 /*******************************************************************************
 * Initialize
 *******************************************************************************/
@@ -272,7 +282,7 @@ $(function () {
         // Load the session storage if there are journeys saved
         processSessionData();
     } else {
-        $('button.processsessiondata, button.clearsessiondata').prop('disabled', true);
+        $('.loaddata').show();
     }
 
     if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
