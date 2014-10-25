@@ -50,6 +50,30 @@ module.exports = function(grunt) {
             }
         },
 
+        real_favicon: {
+            my_icon: {
+                src: 'OysterData/images/train_favicon.png',
+                dest: 'OysterData/images/build',
+                icons_path: 'images/build',
+                html: [],
+                design: {
+                    ios: {
+                        picture_aspect: 'background_and_margin',
+                        background_color: '#ffffff',
+                        margin: 4
+                    },
+                    windows: {
+                        picture_aspect: 'white_silhouette',
+                        background_color: '#2b5797'
+                    }
+                },
+                settings: {
+                    compression: 5,
+                    scaling_algorithm: 'Lanczos'
+                }
+            }
+        },
+
         sass: {
             dist: {
                 options: {
@@ -81,5 +105,5 @@ module.exports = function(grunt) {
     });
 
     require('load-grunt-tasks')(grunt);
-    grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify', 'imagemin']);
+    grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify', 'imagemin', 'real_favicon']);
 };
