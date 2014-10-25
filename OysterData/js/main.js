@@ -86,8 +86,7 @@ $(function () {
         }
         journeys = JSON.parse(journeys);
         var routes = convertJourneysToRoutes(journeys);
-        var minJourneys = $('input[name="minjourneys"]').val();
-        convertStationsToTable(routes, minJourneys);
+        convertStationsToTable(routes);
         $('#routes').attr('data-sortable', 'data-sortable').removeAttr('data-sortable-initialized');
         Sortable.init();
         $('.processeddata').show();
@@ -163,22 +162,20 @@ $(function () {
         return '£' + value.toFixed(2);
     }
 
-    function convertStationsToTable(stationData, minJourneys) {
+    function convertStationsToTable(stationData) {
         var $stationList = $('#routes');
         $('#routes tbody').empty();
         // Staion Name | Count | Avg Time | Total Time | Avg Cost | Total Cost
         $.each(stationData, function (station, data) {
             var journeysCount = data.chargedCount + data.unchargedCount;
-            if (!minJourneys || journeysCount >= minJourneys) {
-                var stationRow = $('<tr/>').addClass('visible').appendTo($stationList);
-                var avgTime = (data.time / 1000 / 60 / journeysCount);
-                var totalTime = (avgTime * journeysCount);
-                var avgCost = data.charged > 0 ? (data.charged / data.chargedCount) : 0;
-                var totalCost = data.charged;
-                $.each([cleanStationName(station), journeysCount, avgTime.toFixed(2), totalTime.toFixed(2), monetaryFormat(avgCost), monetaryFormat(totalCost)], function (index, value) {
-                    $('<td/>').html(value).attr('data-value', value.toString().replace('£', '')).appendTo(stationRow);
-                });
-            }
+            var stationRow = $('<tr/>').addClass('visible').appendTo($stationList);
+            var avgTime = (data.time / 1000 / 60 / journeysCount);
+            var totalTime = (avgTime * journeysCount);
+            var avgCost = data.charged > 0 ? (data.charged / data.chargedCount) : 0;
+            var totalCost = data.charged;
+            $.each([cleanStationName(station), journeysCount, avgTime.toFixed(2), totalTime.toFixed(2), monetaryFormat(avgCost), monetaryFormat(totalCost)], function (index, value) {
+                $('<td/>').html(value).attr('data-value', value.toString().replace('£', '')).appendTo(stationRow);
+            });
         });
     }
 
