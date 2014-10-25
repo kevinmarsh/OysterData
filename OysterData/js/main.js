@@ -198,7 +198,6 @@ $(function () {
         $(selector).each(function () {
             $(this).toggleClass('visible', $(this).find('td:first').text().search(regex) !== -1);
         });
-        setAltRow(selector);
     }
 
     function setAltRow(selector) {
@@ -251,14 +250,16 @@ $(function () {
     });
 
     $('#filter').on('keyup', function (event) {
+        var selector = 'tbody tr';
         if (event.keyCode === 27 || $(this).val() === '') {
             // If esc is pressed we want to clear the value of search box
             // and show all rows
             $(this).val('');
-            $('tbody tr').addClass('visible');
+            $(selector).addClass('visible');
         } else {
-            filter('tbody tr', $(this).val());
+            filter(selector, $(this).val());
         }
+        setAltRow(selector);
     });
 
     $('label span').on('click', function () {
