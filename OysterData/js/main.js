@@ -51,14 +51,17 @@ $(function () {
     function processCSV(csvData) {
         var headerRow;
         var rows = [];
-        $.each(csvData.split('\n'), function (index, row) {
-            var currentRow = {};
+        $.each($.csv.toArrays(csvData), function (index, row) {
             if (headerRow === undefined) {
-                if (row.indexOf('Date,') === 0) {
-                    headerRow = row.toLowerCase().replace(/[^a-z0-9,]/g, '_').replace(/_[a-z]/g, function (x) { return x.slice(1).toUpperCase (); }).split(',');
+                if (row.length && row[0] === 'Date') {
+                    // Give the keys proper names
+                    headerRow = $.map(row, function (header) {
+                        return header.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_[a-z]/g, function (x) { return x.slice(1).toUpperCase (); });
+                    } );
                 }
             } else {
-                $.each(row.split(','), function (i, v) {
+                var currentRow = {};
+                $.each(row, function (i, v) {
                     currentRow[headerRow[i]] = v;
                 });
                 rows.push(currentRow);
@@ -122,7 +125,7 @@ $(function () {
         $.each(journeys, function (i, row) {
             var timeDiff;
             var stationName = row.journeyAction;
-            if (!stationName || stationName.indexOf('"Topped up') === 0 || stationName.indexOf('"Season ticket bought') === 0) {
+            if (!stationName || stationName.indexOf('Topped up') === 0 || stationName.indexOf('Season ticket bought') === 0) {
                 return;
             }
             stationName = stationName.replace(/\"/g, '');
