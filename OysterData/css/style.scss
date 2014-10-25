@@ -1,9 +1,9 @@
 /* Overide the bootstrap settings since we are using a different dir structure */
 [class^="icon-"], [class*=" icon-"] {
-    background-image: url("../../images/glyphicons-halflings.png");
+    background-image: url("../../images/build/glyphicons-halflings.png");
 
     &.icon-white {
-        background-image: url("../../images/glyphicons-halflings-white.png");
+        background-image: url("../../images/build/glyphicons-halflings-white.png");
     }
 }
 
