@@ -1,4 +1,5 @@
 _data/*
+_raw/*
 node_modules/*
 OysterData/js/build/*
 OysterData/css/build/*
