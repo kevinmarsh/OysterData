@@ -87,11 +87,14 @@ $(function () {
         journeys = JSON.parse(journeys);
         var routes = convertJourneysToRoutes(journeys);
         convertStationsToTable(routes);
-        $('#routes').attr('data-sortable', 'data-sortable').removeAttr('data-sortable-initialized');
-        Sortable.init();
         $('.processeddata').show();
         $('button.processsessiondata, button.clearsessiondata').prop('disabled', false);
-        setAltRow('tbody tr');
+        var $sorted = $('[data-sorted="true"]');
+        if ($sorted.length) {
+            // This is a terrible little hack to get Sortable to properly handle data being dynamically added
+            ($sorted.next().length ? $sorted.next() : $sorted.prev()).trigger('click');
+            $sorted.attr('data-sorted-direction', ($sorted.attr('data-sorted-direction') === 'ascending' ? 'descending' : 'ascending')).trigger('click');
+        }
     }
 
     var debouncedProcessSessionData = $.debounce(200, processSessionData);
@@ -191,7 +194,7 @@ $(function () {
     }
 
     function setAltRow(selector) {
-        $(selector).find('.alt').removeClass('alt');
+        $(selector).parent().find('.alt').removeClass('alt');
         $(selector + ':visible:even').addClass('alt');
     }
 
@@ -225,8 +228,6 @@ $(function () {
         $(this).prop('disabled', 'disabled');
         $('.processsessiondata').prop('disabled', 'disabled');
         $('.processeddata').hide();
-        $('#routes').removeAttr('data-sortable');
-        Sortable.init();
     });
 
     $('#sampledata').on('click', function () {
@@ -258,7 +259,7 @@ $(function () {
         setAltRow('tbody tr');
     });
 
-    $('th').on('click', function () {
+    $('table').on('change', function () {
         // Add an event handler *after* the columns have been sorted
         setAltRow('tbody tr');
     });

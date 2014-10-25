@@ -100,6 +100,9 @@
           rowArrayObject = rowArray[_k];
           _results.push(tBody.appendChild(rowArrayObject[1]));
         }
+        event = document.createEvent('HTMLEvents');
+        event.initEvent('change', true, false);
+        table.dispatchEvent(event);
         return _results;
       });
     },

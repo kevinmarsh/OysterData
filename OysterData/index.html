@@ -57,7 +57,7 @@
 
         <div class="processeddata">
             <h1>Osyter Data</h1>
-            <table id="routes" class="sortable-theme-light">
+            <table id="routes" class="sortable-theme-light" data-sortable>
                 <thead>
                     <tr>
                         <th>Staion Name</th>
@@ -68,7 +68,10 @@
                         <th>Total Cost</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <!-- Since we're calling Sortable.init possibly before content has been loaded we've got to have a sample row for it to properly be set up -->
+                    <tr><td data-value="String"></td><td data-value="0"></td><td data-value="0.00"></td><td data-value="0.00"></td><td data-value="0.00"></td><td data-value="0.00"></td></tr>
+                </tbody>
             </table>
         </div>
     </div>
