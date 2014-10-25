@@ -1,6 +1,7 @@
-//@license
-// sortable.js 0.6.0
-// https://github.com/HubSpot/sortable
+/*!
+ * sortable.js 0.6.0
+ * https://github.com/HubSpot/sortable
+ */
 (function() {
   var SELECTOR, addEventListener, clickEvent, numberRegExp, sortable, touchDevice, trimRegExp;
 
