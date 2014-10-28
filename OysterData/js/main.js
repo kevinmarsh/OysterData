@@ -103,6 +103,7 @@ $(function () {
                 $('.results').slideDown();
             });
         }
+        setAltRow('tbody tr');
     }
 
     var debouncedProcessSessionData = $.debounce(200, processSessionData);
