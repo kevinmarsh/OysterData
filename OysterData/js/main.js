@@ -58,6 +58,9 @@ $(function () {
                     headerRow = $.map(row, function (header) {
                         return header.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_[a-z]/g, function (x) { return x.slice(1).toUpperCase (); });
                     } );
+                    if (headerRow.toString() !== "date,startTime,endTime,journeyAction,charge,credit,balance,note") {
+                        throw 'The CSV headers don\'t match up with what we expected';
+                    }
                 }
             } else {
                 var currentRow = {};
