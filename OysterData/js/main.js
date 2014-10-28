@@ -119,6 +119,14 @@ $(function () {
         return a;
     }
 
+    function dateStringToObj(dateStr, timeStr)
+    {
+        // assuming the dateStr is in the format: 24-Sep-2013
+        // assuming the timeStr is in the format: 08:39
+        var month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(timeStr.slice(3,6));
+        return new Date(dateStr.slice(-4), month, dateStr.slice(0,2), timeStr.slice(0,2), timeStr.slice(3));
+    }
+
     function convertJourneysToRoutes(journeys) {
         // Take the array of individual journeys and convert them to routes with aggregated data
         var routes = {};  // Station name, number of journeys, average cost, average time
@@ -139,8 +147,8 @@ $(function () {
                 };
             }
             if (row.endTime) {
-                var endTime = new Date(row.date + ' ' + row.endTime);
-                var startTime = new Date(row.date + ' ' + row.startTime);
+                var endTime = dateStringToObj(row.date, row.endTime);
+                var startTime = dateStringToObj(row.date, row.startTime);
                 if (startTime > endTime) {
                     // Then the trip began before midnight and ended after
                     endTime = new Date(endTime.valueOf() + 86400000);
@@ -287,11 +295,6 @@ $(function () {
         processSessionData();
     } else {
         $('.loaddata').show();
-    }
-
-    if (!/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
-        // Show the browser warning
-        $('<div class="alert alert-warning">Dates may be broken in non-Chromium based browsers due to date parsing in Javascript.</div>').insertAfter('.container.page-header');
     }
 
     if (window.File && window.FileList && window.FileReader) {
