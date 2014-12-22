@@ -5,19 +5,19 @@ module.exports = function(grunt) {
         concat: {
             js: {
                 src: [
-                    'OysterData/js/libs/*.js',
-                    'OysterData/js/main.js'
+                    'src/js/libs/*.js',
+                    'src/js/main.js'
                 ],
-                dest: 'OysterData/js/build/production.js',
+                dest: 'build/js/production.js',
             },
             css: {
                 src: [
-                    'OysterData/css/bootstrap.min.css',
-                    'OysterData/css/bootstrap-responsive.min.css',
-                    'OysterData/css/sortable-theme-light.css',
-                    'OysterData/css/style.css',
+                    'src/css/bootstrap.min.css',
+                    'src/css/bootstrap-responsive.min.css',
+                    'src/css/sortable-theme-light.css',
+                    'src/css/style.css',
                 ],
-                dest: 'OysterData/css/build/global.css',
+                dest: 'build/css/production.css',
             },
         },
 
@@ -26,8 +26,8 @@ module.exports = function(grunt) {
                 preserveComments: 'some'
             },
             build: {
-                src: 'OysterData/js/build/production.js',
-                dest: 'OysterData/js/build/production.min.js'
+                src: 'build/js/production.js',
+                dest: 'build/js/production.min.js'
             },
         },
 
@@ -36,25 +36,25 @@ module.exports = function(grunt) {
                 '-W069': true, // This ignores any warning with a special option syntax (TODO: remove once main.js is refactored)
                 reporter: require('jshint-stylish')
             },
-            target: ['OysterData/js/main.js']
+            target: ['src/js/main.js']
         },
 
         imagemin: {
             dynamic: {
                 files: [{
                     expand: true,
-                    cwd: 'OysterData/images/',
+                    cwd: 'src/images/',
                     src: ['*.{png,jpg,gif}'],
-                    dest: 'OysterData/images/build/'
+                    dest: 'build/images/'
                 }]
             }
         },
 
         real_favicon: {
             my_icon: {
-                src: 'OysterData/images/train_favicon.png',
-                dest: 'OysterData/images/build',
-                icons_path: 'images/build',
+                src: 'src/images/train_favicon.png',
+                dest: 'src/images/',
+                icons_path: 'images/',
                 html: [],
                 design: {
                     ios: {
@@ -80,21 +80,21 @@ module.exports = function(grunt) {
                     style: 'compressed'
                 },
                 files: {
-                    'OysterData/css/style.css': 'OysterData/css/style.scss'
+                    'build/css/style.css': 'src/css/style.scss'
                 }
             }
         },
 
         watch: {
             scripts: {
-                files: ['OysterData/js/*.js'],
+                files: ['src/js/*.js'],
                 tasks: ['jshint', 'concat:js', 'uglify'],
                 options: {
                     spawn: false,
                 },
             },
             css: {
-                files: ['OysterData/css/*.scss'],
+                files: ['src/css/*.scss'],
                 tasks: ['sass', 'concat:css'],
                 options: {
                     spawn: false,
