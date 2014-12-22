@@ -57,6 +57,7 @@ module.exports = function(grunt) {
                 icons_path: 'images/',
                 html: [],
                 design: {
+                    desktop_browser: {},
                     ios: {
                         picture_aspect: 'background_and_margin',
                         background_color: '#ffffff',
