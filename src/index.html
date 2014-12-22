@@ -7,7 +7,15 @@
 
     <title>London Trips</title>
     <meta name="description" content="Aggregates data from your Oyster Card to give you data on your travels in London">
-    <link rel="stylesheet" href="css/build/global.css">
+    <!--(if target dist)><!-->
+    <link rel="stylesheet" href="css/production.min.css">
+    <!--<!(endif)-->
+    <!--(if target ! dist)>
+    <link rel="stylesheet" href="../src/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../src/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="../src/css/sortable-theme-light.css">
+    <link rel="stylesheet" href="../src/css/style.css">
+    <!--<!(endif)-->
 
     <!-- Favicons generation by http://realfavicongenerator.net -->
     <link rel="shortcut icon" href="images/build/favicon.ico">
@@ -87,6 +95,15 @@
             </table>
         </div>
     </div>
-    <script src="js/build/production.min.js"></script>
+    <!--(if target dist)><!-->
+    <script src="js/production.min.js"></script>
+    <!--<!(endif)-->
+    <!--(if target ! dist)>
+    <script src="../src/js/libs/jquery-1.11.0.js"></script>
+    <script src="../src/js/libs/jquery.ba-throttle-debounce.js"></script>
+    <script src="../src/js/libs/jquery.csv-0.71.js"></script>
+    <script src="../src/js/libs/sortable.js"></script>
+    <script src="../src/js/main.js"></script>
+    <!(endif)-->
 </body>
 </html>

@@ -15,9 +15,9 @@ module.exports = function(grunt) {
                     'src/css/bootstrap.min.css',
                     'src/css/bootstrap-responsive.min.css',
                     'src/css/sortable-theme-light.css',
-                    'src/css/style.css',
+                    'build/css/style.css',
                 ],
-                dest: 'build/css/production.css',
+                dest: 'build/css/production.min.css',
             },
         },
 
@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         real_favicon: {
             my_icon: {
                 src: 'src/images/train_favicon.png',
-                dest: 'src/images/',
+                dest: 'build/images/',
                 icons_path: 'images/',
                 html: [],
                 design: {
@@ -85,6 +85,19 @@ module.exports = function(grunt) {
             }
         },
 
+        targethtml: {
+            dist: {
+                files: {
+                    'build/index.html': 'src/index.html'
+                }
+            },
+            dev: {
+                files: {
+                    'build/index_dev.html': 'src/index.html'
+                }
+            }
+        },
+
         watch: {
             scripts: {
                 files: ['src/js/*.js'],
@@ -99,11 +112,18 @@ module.exports = function(grunt) {
                 options: {
                     spawn: false,
                 }
+            },
+            html: {
+                files: ['src/index.html'],
+                tasks: ['targethtml'],
+                options: {
+                    spawn: false,
+                }
             }
         },
 
     });
 
     require('load-grunt-tasks')(grunt);
-    grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify', 'imagemin', 'real_favicon']);
+    grunt.registerTask('default', ['sass', 'jshint', 'concat', 'uglify', 'imagemin', 'real_favicon', 'targethtml']);
 };
